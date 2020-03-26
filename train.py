@@ -242,7 +242,7 @@ if __name__ == '__main__':
                                            dropout=args.dropout)
             decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
                                                  lr=args.decoder_lr)
-        else:
+        elif args.decoder_mode == "TRANSFORMER":
             # TODO: Transformer
             pass
 

@@ -2,9 +2,17 @@
 
 > NTU-AI6127 NLP Final Project
 
-### Ref
+### Reference
 
 * [a-PyTorch-Tutorial-to-Image-Captioning](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)
+
+### TODO
+
+- [x] Baseline.
+- [ ]  Glove pre-trained word embedding
+- [ ] [Multi-Eva metrics](https://github.com/tylin/coco-caption)
+- [ ] [self-attentiion:Transformer](https://github.com/huggingface/transformers)
+- [ ] try [Multi layer RNN](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning/pull/79) or different attention (may discard)
 
 ### Requirements
 
