@@ -5,13 +5,13 @@ import torchvision
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # cuda:0
 
 
-class Encoder(nn.Module):
+class CNN_Encoder(nn.Module):
     """
-    Encoder.
+    CNN_Encoder.
     """
 
     def __init__(self, encoded_image_size=14):
-        super(Encoder, self).__init__()
+        super(CNN_Encoder, self).__init__()
         self.enc_image_size = encoded_image_size
 
         resnet = torchvision.models.resnet101(pretrained=True)  # pretrained ImageNet ResNet-101
@@ -81,9 +81,9 @@ class Attention(nn.Module):
         """
         att1 = self.encoder_att(encoder_out)  # [batch_size_t, num_pixels=196, 2048] -> [batch_size_t, num_pixels, attention_dim]
         att2 = self.decoder_att(decoder_hidden)  # [batch_size_t, decoder_dim=512] -> [batch_size_t, attention_dim]
-        att = self.full_att(self.relu(att1 + att2.unsqueeze(1))).squeeze(2)  # [batch_size_t, num_pixels=196, 2048] -> [batch_size_t, num_pixels]
+        att = self.full_att(self.relu(att1 + att2.unsqueeze(1))).squeeze(2)  # [batch_size_t, num_pixels=196, attention_dim] -> [batch_size_t, num_pixels]
         alpha = self.softmax(att)  # [batch_size_t, num_pixels=196]
-        attention_weighted_encoding = (encoder_out * alpha.unsqueeze(2)).sum(dim=1)  # [batch_size_t, 2048]
+        attention_weighted_encoding = (encoder_out * alpha.unsqueeze(2)).sum(dim=1)  # [batch_size_t, encoder_dim=2048]
 
         return attention_weighted_encoding, alpha
 
@@ -179,7 +179,7 @@ class DecoderWithAttention(nn.Module):
         encoder_out = encoder_out.view(batch_size, -1, encoder_dim)  # (batch_size, num_pixels, encoder_dim)
         num_pixels = encoder_out.size(1)
 
-        # Sort input data by decreasing lengths; why? For each of data in the batch, when len(prediction) = len(caption_lengths), discard it.
+        # Sort input data by decreasing lengths; why? For each of data in the batch, when len(prediction) = len(caption_lengths), Stop.
         caption_lengths, sort_ind = caption_lengths.squeeze(1).sort(dim=0, descending=True)
         encoder_out = encoder_out[sort_ind]
         encoded_captions = encoded_captions[sort_ind]
@@ -212,7 +212,7 @@ class DecoderWithAttention(nn.Module):
             h, c = self.lstm(
                 torch.cat([embeddings[:batch_size_t, t, :], attention_weighted_encoding], dim=1),
                 (h[:batch_size_t], c[:batch_size_t]))
-            preds = self.fc(self.dropout(h))  # (batch_size_t, vocab_size)
+            preds = self.fc(self.dropout(h))  # [batch_size_t, vocab_size]
             predictions[:batch_size_t, t, :] = preds
             alphas[:batch_size_t, t, :] = alpha
 

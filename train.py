@@ -7,7 +7,8 @@ import torch.utils.data
 import torchvision.transforms as transforms
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence
-from models import Encoder, DecoderWithAttention
+from models import *
+from transformer import *
 from datasets import *
 from utils import *
 from nltk.translate.bleu_score import corpus_bleu
@@ -62,10 +63,12 @@ def train(args, train_loader, encoder, decoder, criterion, encoder_optimizer, de
         # pack_padded_sequence is an easy trick to do this
         scores = pack_padded_sequence(scores, decode_lengths, batch_first=True).data
         targets = pack_padded_sequence(targets, decode_lengths, batch_first=True).data
+        # print(scores.size())
+        # print(targets.size())
 
         # Calculate loss
         loss = criterion(scores, targets)
-        # Add doubly stochastic attention regularization
+        # TODO: Add doubly stochastic attention regularization
         loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
 
         # Back prop.
@@ -146,7 +149,7 @@ def validate(args, val_loader, encoder, decoder, criterion):
             # Calculate loss
             loss = criterion(scores, targets)
 
-            # Add doubly stochastic attention regularization
+            # TODO: Add doubly stochastic attention regularization
             loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
 
             # Keep track of metrics
@@ -168,6 +171,9 @@ def validate(args, val_loader, encoder, decoder, criterion):
                     map(lambda c: [w for w in c if w not in {word_map['<start>'], word_map['<pad>']}],
                         img_caps))  # remove <start> and pads
                 references.append(img_captions)
+
+            print(allcaps.size())
+            print(references)
 
             # Hypotheses
             _, preds = torch.max(scores_copy, dim=2)
@@ -194,14 +200,16 @@ if __name__ == '__main__':
     parser.add_argument('--data-name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
     # Model parameters
-    parser.add_argument('--emb-dim', type=int, default=500, help='dimension of word embeddings.')
+    parser.add_argument('--emb-dim', type=int, default=512, help='dimension of word embeddings.')
     parser.add_argument('--attention-dim', type=int, default=512, help='dimension of attention linear layers.')
     parser.add_argument('--decoder-dim', type=int, default=512, help='dimension of decoder RNN.')
     parser.add_argument('--dropout', type=float, default=0.5, help='dropout')
     parser.add_argument('--decoder-mode', default="LSTM_ATTENTION", help='which model does decoder use?')
+    parser.add_argument('--n-layers', type=int, default=6, help='the number of layers of encoder and decoder Moudle in Transformer.')
     # Training parameters
-    parser.add_argument('--epochs', type=int, default=120,
+    parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train for (if early stopping is not triggered).')
+    parser.add_argument('--stop-criteria', type=int, default=25, help='training stop if epochs_since_improvement == stop_criteria')
     parser.add_argument('--batch-size', type=int, default=32, help='batch_size')
     parser.add_argument('--print-freq', type=int, default=100, help='print training/validation stats every __ batches.')
     parser.add_argument('--workers', type=int, default=1, help='for data-loading; right now, only 1 works with h5pys.')
@@ -229,7 +237,7 @@ if __name__ == '__main__':
 
     # Initialize / load checkpoint
     if args.checkpoint is None:
-        encoder = Encoder()
+        encoder = CNN_Encoder()
         encoder.fine_tune(args.fine_tune_encoder)
         encoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, encoder.parameters()),
                                              lr=args.encoder_lr) if args.fine_tune_encoder else None
@@ -240,11 +248,12 @@ if __name__ == '__main__':
                                            decoder_dim=args.decoder_dim,
                                            vocab_size=len(word_map),
                                            dropout=args.dropout)
-            decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
-                                                 lr=args.decoder_lr)
         elif args.decoder_mode == "TRANSFORMER":
             # TODO: Transformer
-            pass
+            decoder = Transformer(vocab_size=len(word_map), embed_dim=args.emb_dim, n_layers=args.n_layers)
+
+        decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
+                                             lr=args.decoder_lr)
 
         # load pre-trained word embedding
         if args.embedding_path is not None:
@@ -304,10 +313,12 @@ if __name__ == '__main__':
     # Epochs
     for epoch in range(start_epoch, args.epochs):
 
-        # Decay learning rate if there is no improvement for 8 consecutive epochs, and terminate training after 20
-        if epochs_since_improvement == 20:
+        # Decay learning rate if there is no improvement for 5 consecutive epochs, and terminate training after 25
+        # 8 20
+        if epochs_since_improvement == args.stop_criteria:
+            print("the model has not improved in the last {} epochs".format(args.stop_criteria))
             break
-        if epochs_since_improvement > 0 and epochs_since_improvement % 8 == 0:
+        if epochs_since_improvement > 0 and epochs_since_improvement % 5 == 0:
             adjust_learning_rate(decoder_optimizer, 0.8)
             if args.fine_tune_encoder:
                 adjust_learning_rate(encoder_optimizer, 0.8)

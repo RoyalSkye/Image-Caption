@@ -9,10 +9,10 @@
 ### TODO
 
 - [x] Baseline.
+- [ ] [self-attentiion:Transformer](https://github.com/huggingface/transformers)
 - [ ]  Glove pre-trained word embedding
 - [ ] [Multi-Eva metrics](https://github.com/tylin/coco-caption)
-- [ ] [self-attentiion:Transformer](https://github.com/huggingface/transformers)
-- [ ] try [Multi layer RNN](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning/pull/79) or different attention (may discard)
+- [ ] try BERT
 
 ### Requirements
 
