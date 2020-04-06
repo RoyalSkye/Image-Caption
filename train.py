@@ -68,8 +68,15 @@ def train(args, train_loader, encoder, decoder, criterion, encoder_optimizer, de
 
         # Calculate loss
         loss = criterion(scores, targets)
-        # TODO: Add doubly stochastic attention regularization
-        loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
+        # Add doubly stochastic attention regularization
+        # Second loss, mentioned in paper "Show, Attend and Tell: Neural Image Caption Generation with Visual Attention"
+        # https://arxiv.org/abs/1502.03044
+        # In section 4.2.1 Doubly stochastic attention regularization: We know the weights sum to 1 at a given timestep.
+        # But we also encourage the weights at a single pixel p to sum to 1 across all timesteps T.
+        # This means we want the model to attend to every pixel over the course of generating the entire sequence.
+        # Therefore, we want to minimize the difference between 1 and the sum of a pixel's weights across all timesteps.
+        if args.decoder_mode == "lstm":
+            loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
 
         # Back prop.
         decoder_optimizer.zero_grad()
@@ -122,7 +129,6 @@ def validate(args, val_loader, encoder, decoder, criterion):
     hypotheses = list()  # hypotheses (predictions)
 
     # explicitly disable gradient calculation to avoid CUDA memory error
-    # solves the issue #57
     with torch.no_grad():
         # Batches
         for i, (imgs, caps, caplens, allcaps) in enumerate(val_loader):
@@ -149,8 +155,9 @@ def validate(args, val_loader, encoder, decoder, criterion):
             # Calculate loss
             loss = criterion(scores, targets)
 
-            # TODO: Add doubly stochastic attention regularization
-            loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
+            # Add doubly stochastic attention regularization
+            if args.decoder_mode == "lstm":
+                loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
 
             # Keep track of metrics
             losses.update(loss.item(), sum(decode_lengths))
@@ -195,32 +202,33 @@ def validate(args, val_loader, encoder, decoder, criterion):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
     # Data parameters
-    parser.add_argument('--data-folder', default="/Users/skye/docs/image_dataset/dataset",
+    parser.add_argument('--data_folder', default="/Users/skye/docs/image_dataset/dataset",
                         help='folder with data files saved by create_input_files.py.')
-    parser.add_argument('--data-name', default="coco_5_cap_per_img_5_min_word_freq",
+    parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
     # Model parameters
-    parser.add_argument('--emb-dim', type=int, default=512, help='dimension of word embeddings.')
-    parser.add_argument('--attention-dim', type=int, default=512, help='dimension of attention linear layers.')
-    parser.add_argument('--decoder-dim', type=int, default=512, help='dimension of decoder RNN.')
+    parser.add_argument('--emb_dim', type=int, default=512, help='dimension of word embeddings.')
+    parser.add_argument('--attention_dim', type=int, default=512, help='dimension of attention linear layers.')
+    parser.add_argument('--decoder_dim', type=int, default=512, help='dimension of decoder RNN.')
     parser.add_argument('--dropout', type=float, default=0.5, help='dropout')
-    parser.add_argument('--decoder-mode', default="LSTM_ATTENTION", help='which model does decoder use?')
-    parser.add_argument('--n-layers', type=int, default=6, help='the number of layers of encoder and decoder Moudle in Transformer.')
+    parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
+    parser.add_argument('--n_layers', type=int, default=6, help='the number of layers of encoder and decoder Moudle in Transformer.')
     # Training parameters
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train for (if early stopping is not triggered).')
-    parser.add_argument('--stop-criteria', type=int, default=25, help='training stop if epochs_since_improvement == stop_criteria')
-    parser.add_argument('--batch-size', type=int, default=32, help='batch_size')
-    parser.add_argument('--print-freq', type=int, default=100, help='print training/validation stats every __ batches.')
+    parser.add_argument('--stop_criteria', type=int, default=25, help='training stop if epochs_since_improvement == stop_criteria')
+    parser.add_argument('--batch_size', type=int, default=32, help='batch_size')
+    parser.add_argument('--print_freq', type=int, default=100, help='print training/validation stats every __ batches.')
     parser.add_argument('--workers', type=int, default=1, help='for data-loading; right now, only 1 works with h5pys.')
-    parser.add_argument('--encoder-lr', type=float, default=1e-4, help='learning rate for encoder if fine-tuning.')
-    parser.add_argument('--decoder-lr', type=float, default=4e-4, help='learning rate for decoder.')
-    parser.add_argument('--grad-clip', type=float, default=5., help='clip gradients at an absolute value of.')
-    parser.add_argument('--alpha-c', type=float, default=1.,
+    parser.add_argument('--encoder_lr', type=float, default=1e-4, help='learning rate for encoder if fine-tuning.')
+    parser.add_argument('--decoder_lr', type=float, default=4e-4, help='learning rate for decoder.')
+    parser.add_argument('--grad_clip', type=float, default=5., help='clip gradients at an absolute value of.')
+    parser.add_argument('--alpha_c', type=float, default=1.,
                         help='regularization parameter for doubly stochastic attention, as in the paper.')
-    parser.add_argument('--fine-tune-encoder', default=False, help='whether fine-tune encoder or not?')
+    parser.add_argument('--fine_tune_encoder', default=False, help='whether fine-tune encoder or not')
+    parser.add_argument('--fine_tune_embedding', default=False, help='whether fine-tune word embeddings or not')
     parser.add_argument('--checkpoint', default=None, help='path to checkpoint, None if none.')
-    parser.add_argument('--embedding-path', default=None, help='path to pre-trained word Embedding.')
+    parser.add_argument('--embedding_path', default=None, help='path to pre-trained word Embedding.')
     args = parser.parse_args()
 
     start_epoch = 0
@@ -242,15 +250,14 @@ if __name__ == '__main__':
         encoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, encoder.parameters()),
                                              lr=args.encoder_lr) if args.fine_tune_encoder else None
 
-        if args.decoder_mode == "LSTM_ATTENTION":
+        if args.decoder_mode == "lstm":
             decoder = DecoderWithAttention(attention_dim=args.attention_dim,
                                            embed_dim=args.emb_dim,
                                            decoder_dim=args.decoder_dim,
                                            vocab_size=len(word_map),
                                            dropout=args.dropout)
-        elif args.decoder_mode == "TRANSFORMER":
-            # TODO: Transformer
-            decoder = Transformer(vocab_size=len(word_map), embed_dim=args.emb_dim, n_layers=args.n_layers)
+        elif args.decoder_mode == "transformer":
+            decoder = Transformer(vocab_size=len(word_map), embed_dim=args.emb_dim, n_layers=args.n_layers, dropout=args.dropout)
 
         decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
                                              lr=args.decoder_lr)
@@ -269,11 +276,14 @@ if __name__ == '__main__':
                 elif w.lower() in all_word_embeds:
                     word_embeds[word_map[w]] = all_word_embeds[w.lower()]
                 else:
-                    # TODO: <pad> <start> <end> <unk>
-                    pass
-            word_embeds = torch.FloatTensor(word_embeds)
+                    # <pad> <start> <end> <unk>
+                    embedding_i = torch.ones(1, args.emb_dim)
+                    torch.nn.init.xavier_uniform_(embedding_i)
+                    word_embeds[word_map[w]] = embedding_i
+
+            word_embeds = torch.FloatTensor(word_embeds).to(device)
             decoder.load_pretrained_embeddings(word_embeds)
-            decoder.fine_tune_embeddings(False)
+            decoder.fine_tune_embeddings(args.fine_tune_embedding)
             print('Loaded {} pre-trained word embeddings.'.format(len(word_embeds)))
 
     else:
@@ -293,6 +303,8 @@ if __name__ == '__main__':
     # Move to GPU, if available
     decoder = decoder.to(device)
     encoder = encoder.to(device)
+    print(encoder)
+    print(decoder)
 
     # Loss function
     criterion = nn.CrossEntropyLoss().to(device)

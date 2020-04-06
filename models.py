@@ -31,12 +31,12 @@ class CNN_Encoder(nn.Module):
         Forward propagation.
 
         :param images: images, a tensor of dimensions (batch_size, 3, image_size, image_size)
-        :return: encoded images
+        :return: encoded images [batch_size, encoded_image_size=14, encoded_image_size=14, 2048]
         """
         out = self.resnet(images)  # (batch_size, 2048, image_size/32, image_size/32)
-        # [32, 2048, 8, 8] -> [32, 2048, 14, 14]
-        out = self.adaptive_pool(out)  # (batch_size, 2048, encoded_image_size, encoded_image_size)
-        out = out.permute(0, 2, 3, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
+        # [batch_size, 2048, 8, 8] -> [batch_size, 2048, 14, 14]
+        out = self.adaptive_pool(out)
+        out = out.permute(0, 2, 3, 1)
         return out
 
     def fine_tune(self, fine_tune=True):
@@ -88,7 +88,7 @@ class Attention(nn.Module):
         return attention_weighted_encoding, alpha
 
 
-# TODO: pre-trained word Embedding, sigmoid-activated gate??
+# TODO: pre-trained word Embedding
 class DecoderWithAttention(nn.Module):
     """
     Decoder.
@@ -113,7 +113,7 @@ class DecoderWithAttention(nn.Module):
         self.dropout = dropout
 
         self.attention = Attention(encoder_dim, decoder_dim, attention_dim)  # attention network
-        self.embedding = nn.Embedding(vocab_size, embed_dim)  # embedding layer
+        self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)  # embedding layer
         self.dropout = nn.Dropout(p=self.dropout)
         self.lstm = nn.LSTMCell(embed_dim + encoder_dim, decoder_dim, bias=True)  # decoding LSTMCell
         self.init_h = nn.Linear(encoder_dim, decoder_dim)  # linear layer to find initial hidden state of LSTMCell
@@ -170,13 +170,13 @@ class DecoderWithAttention(nn.Module):
         :param caption_lengths: caption lengths, a tensor of dimension (batch_size, 1)
         :return: scores for vocabulary, sorted encoded captions, decode lengths, weights, sort indices
         """
-        # [batch_size, 14, 14, 2048]
+        # [batch_size, 14, 14, 2048]/[batch_size, 196, 2048] -> [batch_size, 196, 2048]
         batch_size = encoder_out.size(0)
         encoder_dim = encoder_out.size(-1)
         vocab_size = self.vocab_size
 
-        # Flatten image -> [batch_size, 196, 2048]
-        encoder_out = encoder_out.view(batch_size, -1, encoder_dim)  # (batch_size, num_pixels, encoder_dim)
+        # Flatten image -> [batch_size, num_pixels=196, encoder_dim=2048]
+        encoder_out = encoder_out.view(batch_size, -1, encoder_dim)
         num_pixels = encoder_out.size(1)
 
         # Sort input data by decreasing lengths; why? For each of data in the batch, when len(prediction) = len(caption_lengths), Stop.
@@ -185,10 +185,10 @@ class DecoderWithAttention(nn.Module):
         encoded_captions = encoded_captions[sort_ind]
 
         # Embedding
-        embeddings = self.embedding(encoded_captions)  # (batch_size, max_caption_length=52, embed_dim)
+        embeddings = self.embedding(encoded_captions)  # [batch_size, max_caption_length=52, embed_dim]
 
         # Initialize LSTM state
-        h, c = self.init_hidden_state(encoder_out)  # (batch_size, decoder_dim)
+        h, c = self.init_hidden_state(encoder_out)  # [batch_size, decoder_dim]
 
         # We won't decode at the <end> position, since we've finished generating as soon as we generate <end>
         # So, decoding lengths are actual lengths - 1

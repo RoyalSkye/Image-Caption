@@ -9,10 +9,10 @@
 ### TODO
 
 - [x] Baseline.
-- [ ] [self-attentiion:Transformer](https://github.com/huggingface/transformers)
-- [ ]  Glove pre-trained word embedding
+- [x] [self-attentiion:Transformer](https://github.com/huggingface/transformers)
+- [x]  Glove pre-trained word embedding
 - [ ] [Multi-Eva metrics](https://github.com/tylin/coco-caption)
-- [ ] try BERT
+- [ ] [try BERT](https://github.com/ajamjoom/Image-Captions)
 
 ### Requirements
 
