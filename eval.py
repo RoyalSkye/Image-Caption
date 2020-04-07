@@ -229,10 +229,17 @@ def evaluate_transformer(args):
         hypotheses.append([w for w in seq if w not in {word_map['<start>'], word_map['<end>'], word_map['<pad>']}])
         assert len(references) == len(hypotheses)
 
-    # Calculate BLEU-4 scores
-    bleu4 = corpus_bleu(references, hypotheses)
+    # Calculate BLEU-1~4 scores
+    metrics = {}
+    weights = (1.0 / 1.0,)
+    metrics["bleu1"] = corpus_bleu(references, hypotheses, weights)
+    weights = (1.0 / 2.0, 1.0 / 2.0,)
+    metrics["bleu2"] = corpus_bleu(references, hypotheses, weights)
+    weights = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0,)
+    metrics["bleu3"] = corpus_bleu(references, hypotheses, weights)
+    metrics["bleu4"] = corpus_bleu(references, hypotheses)
 
-    return bleu4
+    return metrics
 
 
 if __name__ == '__main__':
@@ -253,7 +260,7 @@ if __name__ == '__main__':
     print(device)
 
     # Load model
-    checkpoint = torch.load(args.checkpoint)
+    checkpoint = torch.load(args.checkpoint, map_location=str(device))
     decoder = checkpoint['decoder']
     decoder = decoder.to(device)
     decoder.eval()
@@ -272,8 +279,10 @@ if __name__ == '__main__':
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
     if args.decode_mode == "lstm":
-        print("\n%s: BLEU-4 score @ beam size of %d is %.4f." % (args.decoder_mode, args.beam_size, evaluate_lstm(args)))
+        metrics = evaluate_lstm(args)
     elif args.decode_mode == "transformer":
-        print("\n%s: BLEU-4 score @ beam size of %d is %.4f." % (args.decoder_mode, args.beam_size, evaluate_transformer(args)))
-    else:
-        print("decoder type is not supported.")
+        metrics = evaluate_transformer(args)
+
+    print("{} - beam size {}: BLEU-1 score {} BLEU-2 score {} BLEU-3 score {} BLEU-4 score {}".format
+          (args.decoder_mode, args.beam_size, metrics["bleu1"], metrics["bleu2"], metrics["bleu3"], metrics["bleu4"]))
+

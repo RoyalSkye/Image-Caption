@@ -194,9 +194,18 @@ def validate(args, val_loader, encoder, decoder, criterion):
             assert len(references) == len(hypotheses)
 
         # Calculate BLEU-4 scores
-        bleu4 = corpus_bleu(references, hypotheses)
-        print("EVA LOSS: {} TOP-5 Accuracy {} BLEU-4 {}".format(losses.avg, top5accs.avg, bleu4))
-    return bleu4
+        metrics = {}
+        weights = (1.0 / 1.0,)
+        metrics["bleu1"] = corpus_bleu(references, hypotheses, weights)
+        weights = (1.0/2.0, 1.0/2.0,)
+        metrics["bleu2"] = corpus_bleu(references, hypotheses, weights)
+        weights = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0,)
+        metrics["bleu3"] = corpus_bleu(references, hypotheses, weights)
+        metrics["bleu4"] = corpus_bleu(references, hypotheses)
+        print("EVA LOSS: {} TOP-5 Accuracy {} BLEU-1 {} BLEU2 {} BLEU3 {} BLEU-4 {}".format
+              (losses.avg, top5accs.avg,  metrics["bleu1"],  metrics["bleu2"],  metrics["bleu3"],  metrics["bleu4"]))
+
+    return metrics
 
 
 if __name__ == '__main__':
@@ -226,7 +235,7 @@ if __name__ == '__main__':
     parser.add_argument('--alpha_c', type=float, default=1.,
                         help='regularization parameter for doubly stochastic attention, as in the paper.')
     parser.add_argument('--fine_tune_encoder', default=False, help='whether fine-tune encoder or not')
-    parser.add_argument('--fine_tune_embedding', default=False, help='whether fine-tune word embeddings or not')
+    parser.add_argument('--fine_tune_embedding', default=True, help='whether fine-tune word embeddings or not')
     parser.add_argument('--checkpoint', default=None, help='path to checkpoint, None if none.')
     parser.add_argument('--embedding_path', default=None, help='path to pre-trained word Embedding.')
     args = parser.parse_args()
@@ -267,8 +276,10 @@ if __name__ == '__main__':
             all_word_embeds = {}
             for i, line in enumerate(codecs.open(args.embedding_path, 'r', 'utf-8')):
                 s = line.strip().split()
-                if len(s) == args.emb_dim + 1:
-                    all_word_embeds[s[0]] = np.array([float(i) for i in s[1:]])
+                all_word_embeds[s[0]] = np.array([float(i) for i in s[1:]])
+
+            # change emb_dim
+            args.emb_dim = list(all_word_embeds.values())[-1].size
             word_embeds = np.random.uniform(-np.sqrt(0.06), np.sqrt(0.06), (len(word_map), args.emb_dim))
             for w in word_map:
                 if w in all_word_embeds:
@@ -340,7 +351,8 @@ if __name__ == '__main__':
               encoder_optimizer=encoder_optimizer, decoder_optimizer=decoder_optimizer, epoch=epoch)
 
         # One epoch's validation
-        recent_bleu4 = validate(args, val_loader=val_loader, encoder=encoder, decoder=decoder, criterion=criterion)
+        metrics = validate(args, val_loader=val_loader, encoder=encoder, decoder=decoder, criterion=criterion)
+        recent_bleu4 = metrics["bleu4"]
 
         # Check if there was an improvement
         is_best = recent_bleu4 > best_bleu4
