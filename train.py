@@ -301,7 +301,7 @@ if __name__ == '__main__':
         checkpoint = torch.load(args.checkpoint)
         start_epoch = checkpoint['epoch'] + 1
         epochs_since_improvement = checkpoint['epochs_since_improvement']
-        best_bleu4 = checkpoint['bleu-4']
+        best_bleu4 = checkpoint['metrics']["bleu4"]
         encoder = checkpoint['encoder']
         encoder_optimizer = checkpoint['encoder_optimizer']
         decoder = checkpoint['decoder']
@@ -365,4 +365,4 @@ if __name__ == '__main__':
 
         # Save checkpoint
         save_checkpoint(args.data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer,
-                        decoder_optimizer, recent_bleu4, is_best)
+                        decoder_optimizer, metrics, is_best)

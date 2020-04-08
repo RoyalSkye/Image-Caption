@@ -88,7 +88,6 @@ class Attention(nn.Module):
         return attention_weighted_encoding, alpha
 
 
-# TODO: pre-trained word Embedding
 class DecoderWithAttention(nn.Module):
     """
     Decoder.
