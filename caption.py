@@ -26,6 +26,7 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
     """
 
     k = args.beam_size
+    Caption_End = False
     vocab_size = len(word_map)
     # Read image and process
     img = imread(image_path)
@@ -76,7 +77,7 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
 
     # s is a number less than or equal to k, because sequences are removed from this process once they hit <end>
     while True:
-        if args.decode_mode == "lstm":
+        if args.decoder_mode == "lstm":
             embeddings = decoder.embedding(k_prev_words).squeeze(1)  # (s, embed_dim)
             awe, alpha = decoder.attention(encoder_out, h)  # (s, encoder_dim), (s, num_pixels)
             alpha = alpha.view(-1, enc_image_size, enc_image_size).unsqueeze(1)  # (s, 1, enc_image_size, enc_image_size)
@@ -84,7 +85,7 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
             awe = gate * awe
             h, c = decoder.lstm(torch.cat([embeddings, awe], dim=1), (h, c))  # (s, decoder_dim)
             scores = decoder.fc(h)  # (s, vocab_size)
-        elif args.decode_mode == "transformer":
+        elif args.decoder_mode == "transformer":
             cap_len = torch.LongTensor([52]).repeat(k, 1).to(device)  # [s, 1]
             scores, _, _, alpha_dict, _ = decoder(encoder_out, k_prev_words, cap_len)
             scores = scores[:, step - 1, :].squeeze(1)  # [s, 1, vocab_size] -> [s, vocab_size]
@@ -117,6 +118,7 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
         complete_inds = list(set(range(len(next_word_inds))) - set(incomplete_inds))
         # Set aside complete sequences
         if len(complete_inds) > 0:
+            Caption_End = True
             complete_seqs.extend(seqs[complete_inds].tolist())
             complete_seqs_alpha.extend(seqs_alpha[complete_inds].tolist())
             complete_seqs_scores.extend(top_k_scores[complete_inds])
@@ -129,19 +131,21 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
         seqs_alpha = seqs_alpha[incomplete_inds]
         encoder_out = encoder_out[prev_word_inds[incomplete_inds]]
         top_k_scores = top_k_scores[incomplete_inds].unsqueeze(1)
-        if args.decode_mode == "lstm":
+        if args.decoder_mode == "lstm":
             h = h[prev_word_inds[incomplete_inds]]
             c = c[prev_word_inds[incomplete_inds]]
             k_prev_words = next_word_inds[incomplete_inds].unsqueeze(1)
-        elif args.decode_mode == "transformer":
+        elif args.decoder_mode == "transformer":
             k_prev_words = k_prev_words[incomplete_inds]
-            k_prev_words[:, step] = next_word_inds[incomplete_inds]  # [s, 52]
+            k_prev_words[:, :step + 1] = seqs  # [s, 52]
+            # k_prev_words[:, step] = next_word_inds[incomplete_inds]  # [s, 52]
 
         # Break if things have been going on too long
         if step > 50:
             break
         step += 1
 
+    assert Caption_End
     i = complete_seqs_scores.index(max(complete_seqs_scores))
     seq = complete_seqs[i]
     alphas = complete_seqs_alpha[i]

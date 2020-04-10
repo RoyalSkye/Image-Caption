@@ -20,6 +20,7 @@ def evaluate_lstm(args):
     :return: BLEU-4 score
     """
     beam_size = args.beam_size
+    Caption_End = False
     # DataLoader
     loader = torch.utils.data.DataLoader(
         CaptionDataset(args.data_folder, args.data_name, 'TEST', transform=transforms.Compose([normalize])),
@@ -90,6 +91,7 @@ def evaluate_lstm(args):
             complete_inds = list(set(range(len(next_word_inds))) - set(incomplete_inds))
             # Set aside complete sequences
             if len(complete_inds) > 0:
+                Caption_End = True
                 complete_seqs.extend(seqs[complete_inds].tolist())
                 complete_seqs_scores.extend(top_k_scores[complete_inds])
             k -= len(complete_inds)  # reduce beam length accordingly
@@ -109,6 +111,7 @@ def evaluate_lstm(args):
             step += 1
 
         # choose the caption which has the best_score.
+        assert Caption_End
         i = complete_seqs_scores.index(max(complete_seqs_scores))
         seq = complete_seqs[i]
         # References
@@ -121,10 +124,17 @@ def evaluate_lstm(args):
         hypotheses.append([w for w in seq if w not in {word_map['<start>'], word_map['<end>'], word_map['<pad>']}])
         assert len(references) == len(hypotheses)
 
-    # Calculate BLEU-4 scores
-    bleu4 = corpus_bleu(references, hypotheses)
+    # Calculate BLEU-1~4 scores
+    metrics = {}
+    weights = (1.0 / 1.0,)
+    metrics["bleu1"] = corpus_bleu(references, hypotheses, weights)
+    weights = (1.0 / 2.0, 1.0 / 2.0,)
+    metrics["bleu2"] = corpus_bleu(references, hypotheses, weights)
+    weights = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0,)
+    metrics["bleu3"] = corpus_bleu(references, hypotheses, weights)
+    metrics["bleu4"] = corpus_bleu(references, hypotheses)
 
-    return bleu4
+    return metrics
 
 
 def evaluate_transformer(args):
@@ -135,6 +145,7 @@ def evaluate_transformer(args):
     :return: BLEU-4 score
     """
     beam_size = args.beam_size
+    Caption_End = False
     # DataLoader
     loader = torch.utils.data.DataLoader(
         CaptionDataset(args.data_folder, args.data_name, 'TEST', transform=transforms.Compose([normalize])),
@@ -173,6 +184,7 @@ def evaluate_transformer(args):
         # Start decoding
         # s is a number less than or equal to k, because sequences are removed from this process once they hit <end>
         while True:
+            # print("steps {} k_prev_words: {}".format(step, k_prev_words))
             cap_len = torch.LongTensor([52]).repeat(k, 1).to(device)  # [s, 1]
             scores, _, _, _, _ = decoder(encoder_out, k_prev_words, cap_len)
             scores = scores[:, step-1, :].squeeze(1)  # [s, 1, vocab_size] -> [s, vocab_size]
@@ -189,6 +201,7 @@ def evaluate_transformer(args):
             # Convert unrolled indices to actual indices of scores
             prev_word_inds = top_k_words // vocab_size  # (s)
             next_word_inds = top_k_words % vocab_size  # (s)
+
             # Add new words to sequences
             seqs = torch.cat([seqs[prev_word_inds], next_word_inds.unsqueeze(1)], dim=1)  # (s, step+1)
             # Which sequences are incomplete (didn't reach <end>)?
@@ -197,26 +210,28 @@ def evaluate_transformer(args):
             complete_inds = list(set(range(len(next_word_inds))) - set(incomplete_inds))
             # Set aside complete sequences
             if len(complete_inds) > 0:
+                Caption_End = True
                 complete_seqs.extend(seqs[complete_inds].tolist())
                 complete_seqs_scores.extend(top_k_scores[complete_inds])
             k -= len(complete_inds)  # reduce beam length accordingly
             # Proceed with incomplete sequences
             if k == 0:
                 break
-
             seqs = seqs[incomplete_inds]
             encoder_out = encoder_out[prev_word_inds[incomplete_inds]]
             top_k_scores = top_k_scores[incomplete_inds].unsqueeze(1)
             # Important: this will not work, since decoder has self-attention
             # k_prev_words = next_word_inds[incomplete_inds].unsqueeze(1).repeat(k, 52)
             k_prev_words = k_prev_words[incomplete_inds]
-            k_prev_words[:, step] = next_word_inds[incomplete_inds]  # [s, 52]
+            k_prev_words[:, :step+1] = seqs  # [s, 52]
+            # k_prev_words[:, step] = next_word_inds[incomplete_inds]  # [s, 52]
             # Break if things have been going on too long
             if step > 50:
                 break
             step += 1
 
         # choose the caption which has the best_score.
+        assert Caption_End
         i = complete_seqs_scores.index(max(complete_seqs_scores))
         seq = complete_seqs[i]
         # References
@@ -248,9 +263,9 @@ if __name__ == '__main__':
                         help='folder with data files saved by create_input_files.py.')
     parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
-    parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
-    parser.add_argument('--beam_size', type=int, default=1, help='beam_size.')
-    parser.add_argument('--checkpoint', default="./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar",
+    parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
+    parser.add_argument('--beam_size', type=int, default=3, help='beam_size.')
+    parser.add_argument('--checkpoint', default="/Users/skye/Downloads/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar",
                         help='model checkpoint.')
     args = parser.parse_args()
 
@@ -278,9 +293,9 @@ if __name__ == '__main__':
     # Normalization transform
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
-    if args.decode_mode == "lstm":
+    if args.decoder_mode == "lstm":
         metrics = evaluate_lstm(args)
-    elif args.decode_mode == "transformer":
+    elif args.decoder_mode == "transformer":
         metrics = evaluate_transformer(args)
 
     print("{} - beam size {}: BLEU-1 score {} BLEU-2 score {} BLEU-3 score {} BLEU-4 score {}".format

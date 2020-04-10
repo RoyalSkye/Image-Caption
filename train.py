@@ -179,9 +179,6 @@ def validate(args, val_loader, encoder, decoder, criterion):
                         img_caps))  # remove <start> and pads
                 references.append(img_captions)
 
-            print(allcaps.size())
-            print(references)
-
             # Hypotheses
             _, preds = torch.max(scores_copy, dim=2)
             preds = preds.tolist()
@@ -193,7 +190,7 @@ def validate(args, val_loader, encoder, decoder, criterion):
 
             assert len(references) == len(hypotheses)
 
-        # Calculate BLEU-4 scores
+        # Calculate BLEU-1~4 scores
         metrics = {}
         weights = (1.0 / 1.0,)
         metrics["bleu1"] = corpus_bleu(references, hypotheses, weights)
