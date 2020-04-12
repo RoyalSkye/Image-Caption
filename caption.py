@@ -193,7 +193,7 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
     parser.add_argument('--img', '-i', help='path to image')
-    parser.add_argument('--model', '-m', default="./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
+    parser.add_argument('--model', '-m', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
     parser.add_argument('--word_map', '-wm', default="/Users/skye/docs/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
                         help='path to word map JSON')
     parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
@@ -221,8 +221,9 @@ if __name__ == '__main__':
     rev_word_map = {v: k for k, v in word_map.items()}  # ix2word
 
     # Encode, decode with attention and beam search
-    seq, alphas = caption_image_beam_search(args, encoder, decoder, args.img, word_map)
-    alphas = torch.FloatTensor(alphas)
+    with torch.no_grad():
+        seq, alphas = caption_image_beam_search(args, encoder, decoder, args.img, word_map)
+        alphas = torch.FloatTensor(alphas)
 
     # Visualize caption and attention of best sequence
     visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)

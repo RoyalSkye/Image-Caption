@@ -113,7 +113,7 @@ def validate(args, val_loader, encoder, decoder, criterion):
     :param encoder: encoder model
     :param decoder: decoder model
     :param criterion: loss layer
-    :return: BLEU-4 score
+    :return: score_dict {'Bleu_1': 0., 'Bleu_2': 0., 'Bleu_3': 0., 'Bleu_4': 0., 'METEOR': 0., 'ROUGE_L': 0., 'CIDEr': 1.}
     """
     decoder.eval()  # eval mode (no dropout or batchnorm)
     if encoder is not None:
@@ -190,17 +190,22 @@ def validate(args, val_loader, encoder, decoder, criterion):
 
             assert len(references) == len(hypotheses)
 
-        # Calculate BLEU-1~4 scores
-        metrics = {}
-        weights = (1.0 / 1.0,)
-        metrics["bleu1"] = corpus_bleu(references, hypotheses, weights)
-        weights = (1.0/2.0, 1.0/2.0,)
-        metrics["bleu2"] = corpus_bleu(references, hypotheses, weights)
-        weights = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0,)
-        metrics["bleu3"] = corpus_bleu(references, hypotheses, weights)
-        metrics["bleu4"] = corpus_bleu(references, hypotheses)
-        print("EVA LOSS: {} TOP-5 Accuracy {} BLEU-1 {} BLEU2 {} BLEU3 {} BLEU-4 {}".format
-              (losses.avg, top5accs.avg,  metrics["bleu1"],  metrics["bleu2"],  metrics["bleu3"],  metrics["bleu4"]))
+    # Calculate BLEU-1~4 scores
+    # metrics = {}
+    # weights = (1.0 / 1.0,)
+    # metrics["bleu1"] = corpus_bleu(references, hypotheses, weights)
+    # weights = (1.0/2.0, 1.0/2.0,)
+    # metrics["bleu2"] = corpus_bleu(references, hypotheses, weights)
+    # weights = (1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0,)
+    # metrics["bleu3"] = corpus_bleu(references, hypotheses, weights)
+    # metrics["bleu4"] = corpus_bleu(references, hypotheses)
+
+    # Calculate BLEU1~4, METEOR, ROUGE_L, CIDEr scores
+    metrics = get_eval_score(references, hypotheses)
+
+    print("EVA LOSS: {} TOP-5 Accuracy {} BLEU-1 {} BLEU2 {} BLEU3 {} BLEU-4 {} METEOR {} ROUGE_L {} CIDEr {}".format
+          (losses.avg, top5accs.avg,  metrics["Bleu_1"],  metrics["Bleu_2"],  metrics["Bleu_3"],  metrics["Bleu_4"],
+           metrics["METEOR"], metrics["ROUGE_L"], metrics["CIDEr"]))
 
     return metrics
 
@@ -234,6 +239,7 @@ if __name__ == '__main__':
     parser.add_argument('--fine_tune_encoder', default=False, help='whether fine-tune encoder or not')
     parser.add_argument('--fine_tune_embedding', default=True, help='whether fine-tune word embeddings or not')
     parser.add_argument('--checkpoint', default=None, help='path to checkpoint, None if none.')
+    # parser.add_argument('--checkpoint', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to checkpoint, None if none.')
     parser.add_argument('--embedding_path', default=None, help='path to pre-trained word Embedding.')
     args = parser.parse_args()
 
@@ -298,7 +304,7 @@ if __name__ == '__main__':
         checkpoint = torch.load(args.checkpoint)
         start_epoch = checkpoint['epoch'] + 1
         epochs_since_improvement = checkpoint['epochs_since_improvement']
-        best_bleu4 = checkpoint['metrics']["bleu4"]
+        best_bleu4 = checkpoint['metrics']["Bleu_4"]
         encoder = checkpoint['encoder']
         encoder_optimizer = checkpoint['encoder_optimizer']
         decoder = checkpoint['decoder']
@@ -349,7 +355,7 @@ if __name__ == '__main__':
 
         # One epoch's validation
         metrics = validate(args, val_loader=val_loader, encoder=encoder, decoder=decoder, criterion=criterion)
-        recent_bleu4 = metrics["bleu4"]
+        recent_bleu4 = metrics["Bleu_4"]
 
         # Check if there was an improvement
         is_best = recent_bleu4 > best_bleu4

@@ -11,8 +11,9 @@
 - [x] Baseline.
 - [x] [self-attentiion:Transformer](https://github.com/huggingface/transformers)
 - [x]  Glove pre-trained word embedding
-- [ ] [Multi-Eva metrics](https://github.com/tylin/coco-caption)
-- [ ] [try BERT](https://github.com/ajamjoom/Image-Captions)
+- [x] [Multi-Eva metrics](https://github.com/tylin/coco-caption)
+- [ ] Human evaluation
+- [ ] Tune parameters of Transformer
 
 ### Requirements
 
