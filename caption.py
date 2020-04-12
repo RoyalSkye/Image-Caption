@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -153,7 +154,7 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
     return seq, alphas
 
 
-def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
+def visualize_att(image_path, seq, alphas, rev_word_map, save_path=None, smooth=True):
     """
     Visualizes caption with weights at every word.
     Adapted from paper authors' repo: https://github.com/kelvinxu/arctic-captions/blob/master/alpha_visualization.ipynb
@@ -187,14 +188,18 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
             plt.imshow(alpha, alpha=0.8)
         plt.set_cmap(cm.Greys_r)
         plt.axis('off')
-    plt.show()
+    if save_path is not None:
+        plt.savefig(os.path.join(save_path, '{}_caption.png'.format(image_path.split('/')[-1])))
+    else:
+        plt.show()
+
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
     parser.add_argument('--img', '-i', help='path to image')
-    parser.add_argument('--model', '-m', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
-    parser.add_argument('--word_map', '-wm', default="/Users/skye/docs/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
+    parser.add_argument('--model', '-m', default="./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
+    parser.add_argument('--word_map', '-wm', default="/data2/lwl/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
                         help='path to word map JSON')
     parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--beam_size', '-b', default=3, type=int, help='beam size for beam search')
@@ -226,4 +231,5 @@ if __name__ == '__main__':
         alphas = torch.FloatTensor(alphas)
 
     # Visualize caption and attention of best sequence
-    visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
+    save_path = "/home/lwl/Caption/nlp_caption/"
+    visualize_att(args.img, seq, alphas, rev_word_map,save_path=save_path, smooth=args.smooth)

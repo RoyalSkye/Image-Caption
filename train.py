@@ -213,7 +213,7 @@ def validate(args, val_loader, encoder, decoder, criterion):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
     # Data parameters
-    parser.add_argument('--data_folder', default="/Users/skye/docs/image_dataset/dataset",
+    parser.add_argument('--data_folder', default="/data2/lwl/image_dataset/dataset",
                         help='folder with data files saved by create_input_files.py.')
     parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')

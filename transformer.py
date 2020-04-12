@@ -284,7 +284,12 @@ class Transformer(nn.Module):
         batch_size = enc_inputs.size(0)
         encoder_dim = enc_inputs.size(-1)
         enc_inputs = enc_inputs.view(batch_size, -1, encoder_dim)
-        encoder_out, enc_self_attns = self.encoder(enc_inputs)
+
+        # tmp: remove encoder
+        # encoder_out, enc_self_attns = self.encoder(enc_inputs)
+        enc_self_attns = 1
+        encoder_out = enc_inputs
+
         # encoder_out: [batch_size, 196, 2048]
         predictions, encoded_captions, decode_lengths, sort_ind, dec_self_attns, dec_enc_attns = self.decoder(encoder_out, encoded_captions, caption_lengths)
         alphas = {"enc_self_attns": enc_self_attns, "dec_self_attns": dec_self_attns, "dec_enc_attns": dec_enc_attns}
