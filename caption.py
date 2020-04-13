@@ -195,9 +195,15 @@ def visualize_att(image_path, seq, alphas, rev_word_map, path, smooth=True):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
+<<<<<<< .merge_file_a11212
     parser.add_argument('--img', '-i', default="/home/lwl/Caption/image/COCO_val2014_000000581886.jpg", help='path to image')
     parser.add_argument('--model', '-m', default="./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
     parser.add_argument('--word_map', '-wm', default="/data2/lwl/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
+=======
+    parser.add_argument('--img', '-i', default="/Users/skye/docs/image_dataset/val2014/COCO_val2014_000000000520.jpg", help='path to image')
+    parser.add_argument('--model', '-m', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
+    parser.add_argument('--word_map', '-wm', default="/Users/skye/docs/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
+>>>>>>> .merge_file_a11628
                         help='path to word map JSON')
     parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--save_img_dir', '-p', default="./caption", help='path to save annotated img.')
