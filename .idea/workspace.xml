@@ -20,10 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="56b7ad64-4791-461f-b8c9-239a30ba0165" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caption.py" beforeDir="false" afterPath="$PROJECT_DIR$/caption.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformer.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +48,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.eval">
+  <component name="RunManager" selected="Python.caption">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="Image-Caption" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -64,6 +63,25 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="caption" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Image-Caption" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/caption.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -137,6 +155,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.caption" />
         <item itemvalue="Python.eval" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.utils" />
@@ -156,7 +175,7 @@
       <workItem from="1586340393362" duration="1292000" />
       <workItem from="1586321445681" duration="24440000" />
       <workItem from="1586442533821" duration="14787000" />
-      <workItem from="1586672135070" duration="7611000" />
+      <workItem from="1586672135070" duration="20906000" />
     </task>
     <servers />
   </component>
@@ -193,6 +212,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="640" y="255" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586442452869" />
+    <state x="872" y="440" key="#xdebugger.evaluate" timestamp="1586687611965">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="872" y="440" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1586687611965" />
     <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1586526406254">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -201,47 +224,51 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1586672271403" />
-    <state width="1877" height="322" key="GridCell.Tab.0.bottom" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.0.bottom" timestamp="1586747626532">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
+    <state width="1877" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
     <state width="1807" height="765" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685691" />
-    <state width="1877" height="322" key="GridCell.Tab.0.center" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.0.center" timestamp="1586747626532">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
+    <state width="1877" height="206" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
     <state width="1807" height="765" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685689" />
-    <state width="1877" height="322" key="GridCell.Tab.0.left" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.0.left" timestamp="1586747626532">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
+    <state width="1877" height="206" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
     <state width="1807" height="765" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685687" />
-    <state width="1877" height="322" key="GridCell.Tab.0.right" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.0.right" timestamp="1586747626532">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
+    <state width="1877" height="206" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
     <state width="1807" height="765" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685690" />
-    <state width="1877" height="322" key="GridCell.Tab.1.bottom" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.1.bottom" timestamp="1586747626533">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
-    <state width="1877" height="322" key="GridCell.Tab.1.center" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
+    <state width="1877" height="206" key="GridCell.Tab.1.center" timestamp="1586747626533">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
-    <state width="1877" height="322" key="GridCell.Tab.1.left" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
+    <state width="1877" height="206" key="GridCell.Tab.1.left" timestamp="1586747626533">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
-    <state width="1877" height="322" key="GridCell.Tab.1.right" timestamp="1586677179112">
+    <state width="1877" height="206" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
+    <state width="1877" height="206" key="GridCell.Tab.1.right" timestamp="1586747626533">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="322" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586677179112" />
+    <state width="1877" height="206" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
     <state x="430" y="158" key="SettingsEditor" timestamp="1586672286785">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="430" y="158" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1586672286785" />
     <state x="482" y="187" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1586340642517" />
+    <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1586683711287">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1586683711287" />
     <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1586676607852">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -275,11 +302,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/eval.py</url>
-          <line>143</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/eval.py</url>
           <line>158</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
@@ -293,12 +315,53 @@
           <line>240</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/caption.py</url>
+          <line>93</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/caption.py</url>
+          <line>106</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/caption.py</url>
+          <line>112</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/caption.py</url>
+          <line>118</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/caption.py</url>
+          <line>116</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/caption.py</url>
+          <line>120</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/eval.py</url>
+          <line>197</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/eval.py</url>
+          <line>89</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Image_Caption$utils.coverage" NAME="utils Coverage Results" MODIFIED="1586329542333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Image_Caption$eval.coverage" NAME="eval Coverage Results" MODIFIED="1586677123763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Image_Caption$eval.coverage" NAME="eval Coverage Results" MODIFIED="1586688677183" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Image_Caption$train.coverage" NAME="train Coverage Results" MODIFIED="1586367258092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Image_Caption$caption.coverage" NAME="caption Coverage Results" MODIFIED="1586689026757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
