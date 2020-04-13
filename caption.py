@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os, time
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -153,7 +154,7 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
     return seq, alphas
 
 
-def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
+def visualize_att(image_path, seq, alphas, rev_word_map, path, smooth=True):
     """
     Visualizes caption with weights at every word.
     Adapted from paper authors' repo: https://github.com/kelvinxu/arctic-captions/blob/master/alpha_visualization.ipynb
@@ -187,16 +188,19 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
             plt.imshow(alpha, alpha=0.8)
         plt.set_cmap(cm.Greys_r)
         plt.axis('off')
+    print(path)
+    plt.savefig(path)
     plt.show()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
-    parser.add_argument('--img', '-i', help='path to image')
+    parser.add_argument('--img', '-i', default="/Users/skye/docs/image_dataset/val2014/COCO_val2014_000000000520.jpg", help='path to image')
     parser.add_argument('--model', '-m', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
     parser.add_argument('--word_map', '-wm', default="/Users/skye/docs/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
                         help='path to word map JSON')
     parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
+    parser.add_argument('--save_img_dir', '-p', default="./caption", help='path to save annotated img.')
     parser.add_argument('--beam_size', '-b', default=3, type=int, help='beam size for beam search')
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
     args = parser.parse_args()
@@ -225,5 +229,9 @@ if __name__ == '__main__':
         seq, alphas = caption_image_beam_search(args, encoder, decoder, args.img, word_map)
         alphas = torch.FloatTensor(alphas)
 
+    if not (os.path.exists(args.save_img_dir) and os.path.isdir(args.save_img_dir)):
+        os.makedirs(args.save_img_dir)
+    timestamp = str(int(time.time()))
+    path = args.save_img_dir + "/" + timestamp + ".png"
     # Visualize caption and attention of best sequence
-    visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
+    visualize_att(args.img, seq, alphas, rev_word_map, path, args.smooth)

@@ -77,6 +77,14 @@ def train(args, train_loader, encoder, decoder, criterion, encoder_optimizer, de
         # Therefore, we want to minimize the difference between 1 and the sum of a pixel's weights across all timesteps.
         if args.decoder_mode == "lstm":
             loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
+        # elif args.decoder.mode == "transformer":
+        #     dec_alphas = alphas["dec_enc_attns"]
+        #     alpha_trans_c = args.alpha_c / (8 * args.n_layers)
+        #     for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
+        #         cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
+        #         for h in range(8):  # 8个head
+        #             cur_head_alpha = cur_layer_alphas[:, h, :, :]
+        #             loss += alpha_trans_c * ((1. - cur_head_alpha.sum(dim=1)) ** 2).mean()
 
         # Back prop.
         decoder_optimizer.zero_grad()
@@ -158,6 +166,14 @@ def validate(args, val_loader, encoder, decoder, criterion):
             # Add doubly stochastic attention regularization
             if args.decoder_mode == "lstm":
                 loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
+            # elif args.decoder.mode == "transformer":
+            #     dec_alphas = alphas["dec_enc_attns"]
+            #     alpha_trans_c = args.alpha_c / (8 * args.n_layers)
+            #     for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
+            #         cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
+            #         for h in range(8):  # 8个head
+            #             cur_head_alpha = cur_layer_alphas[:, h, :, :]
+            #             loss += alpha_trans_c * ((1. - cur_head_alpha.sum(dim=1)) ** 2).mean()
 
             # Keep track of metrics
             losses.update(loss.item(), sum(decode_lengths))
@@ -222,8 +238,8 @@ if __name__ == '__main__':
     parser.add_argument('--attention_dim', type=int, default=512, help='dimension of attention linear layers.')
     parser.add_argument('--decoder_dim', type=int, default=512, help='dimension of decoder RNN.')
     parser.add_argument('--dropout', type=float, default=0.5, help='dropout')
-    parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
-    parser.add_argument('--n_layers', type=int, default=6, help='the number of layers of encoder and decoder Moudle in Transformer.')
+    parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
+    parser.add_argument('--n_layers', type=int, default=2, help='the number of layers of encoder and decoder Moudle in Transformer.')
     # Training parameters
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train for (if early stopping is not triggered).')
@@ -232,7 +248,7 @@ if __name__ == '__main__':
     parser.add_argument('--print_freq', type=int, default=100, help='print training/validation stats every __ batches.')
     parser.add_argument('--workers', type=int, default=1, help='for data-loading; right now, only 1 works with h5pys.')
     parser.add_argument('--encoder_lr', type=float, default=1e-4, help='learning rate for encoder if fine-tuning.')
-    parser.add_argument('--decoder_lr', type=float, default=4e-4, help='learning rate for decoder.')
+    parser.add_argument('--decoder_lr', type=float, default=1e-4, help='learning rate for decoder.')
     parser.add_argument('--grad_clip', type=float, default=5., help='clip gradients at an absolute value of.')
     parser.add_argument('--alpha_c', type=float, default=1.,
                         help='regularization parameter for doubly stochastic attention, as in the paper.')
