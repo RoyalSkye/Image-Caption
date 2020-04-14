@@ -77,14 +77,14 @@ def train(args, train_loader, encoder, decoder, criterion, encoder_optimizer, de
         # Therefore, we want to minimize the difference between 1 and the sum of a pixel's weights across all timesteps.
         if args.decoder_mode == "lstm":
             loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
-        # elif args.decoder_mode == "transformer":
-        #     dec_alphas = alphas["dec_enc_attns"]
-        #     alpha_trans_c = args.alpha_c / (8 * args.n_layers)
-        #     for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
-        #         cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
-        #         for h in range(8):  # 8个head
-        #             cur_head_alpha = cur_layer_alphas[:, h, :, :]
-        #             loss += alpha_trans_c * ((1. - cur_head_alpha.sum(dim=1)) ** 2).mean()
+        elif args.decoder_mode == "transformer":
+            dec_alphas = alphas["dec_enc_attns"]
+            alpha_trans_c = args.alpha_c / (args.n_heads * args.n_layers)
+            for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
+                cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
+                for h in range(args.n_heads):
+                    cur_head_alpha = cur_layer_alphas[:, h, :, :]
+                    loss += alpha_trans_c * ((1. - cur_head_alpha.sum(dim=1)) ** 2).mean()
 
         # Back prop.
         decoder_optimizer.zero_grad()
@@ -166,14 +166,14 @@ def validate(args, val_loader, encoder, decoder, criterion):
             # Add doubly stochastic attention regularization
             if args.decoder_mode == "lstm":
                 loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
-            # elif args.decoder_mode == "transformer":
-            #     dec_alphas = alphas["dec_enc_attns"]
-            #     alpha_trans_c = args.alpha_c / (8 * args.n_layers)
-            #     for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
-            #         cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
-            #         for h in range(8):  # 8个head
-            #             cur_head_alpha = cur_layer_alphas[:, h, :, :]
-            #             loss += alpha_trans_c * ((1. - cur_head_alpha.sum(dim=1)) ** 2).mean()
+            elif args.decoder_mode == "transformer":
+                dec_alphas = alphas["dec_enc_attns"]
+                alpha_trans_c = args.alpha_c / (args.n_heads * args.n_layers)
+                for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
+                    cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
+                    for h in range(args.n_heads):
+                        cur_head_alpha = cur_layer_alphas[:, h, :, :]
+                        loss += alpha_trans_c * ((1. - cur_head_alpha.sum(dim=1)) ** 2).mean()
 
             # Keep track of metrics
             losses.update(loss.item(), sum(decode_lengths))
@@ -237,6 +237,7 @@ if __name__ == '__main__':
     parser.add_argument('--emb_dim', type=int, default=512, help='dimension of word embeddings.')
     parser.add_argument('--attention_dim', type=int, default=512, help='dimension of attention linear layers.')
     parser.add_argument('--decoder_dim', type=int, default=512, help='dimension of decoder RNN.')
+    parser.add_argument('--n_heads', type=int, default=8, help='Multi-head attention.')
     parser.add_argument('--dropout', type=float, default=0.1, help='dropout')
     parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--attention_method', default="ByPixel", help='which attention method to use?')  # ByPixel or ByChannel
@@ -287,7 +288,7 @@ if __name__ == '__main__':
                                            dropout=args.dropout)
         elif args.decoder_mode == "transformer":
             decoder = Transformer(vocab_size=len(word_map), embed_dim=args.emb_dim, n_layers=args.n_layers,
-                                  dropout=args.dropout, attention_method=args.attention_method)
+                                  dropout=args.dropout, attention_method=args.attention_method, n_heads=args.n_heads)
 
         decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
                                              lr=args.decoder_lr)

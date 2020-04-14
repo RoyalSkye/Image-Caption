@@ -93,14 +93,14 @@ class PoswiseFeedForwardNet(nn.Module):
 
 
 class DecoderLayer(nn.Module):
-    def __init__(self, embed_dim, dropout, attention_method):
+    def __init__(self, embed_dim, dropout, attention_method, n_heads):
         super(DecoderLayer, self).__init__()
-        self.dec_self_attn = Multi_Head_Attention(Q_dim=embed_dim, K_dim=embed_dim, QKVdim=64, n_heads=8, dropout=dropout)
+        self.dec_self_attn = Multi_Head_Attention(Q_dim=embed_dim, K_dim=embed_dim, QKVdim=64, n_heads=n_heads, dropout=dropout)
         if attention_method == "ByPixel":
-            self.dec_enc_attn = Multi_Head_Attention(Q_dim=embed_dim, K_dim=2048, QKVdim=64, n_heads=8, dropout=dropout)
+            self.dec_enc_attn = Multi_Head_Attention(Q_dim=embed_dim, K_dim=2048, QKVdim=64, n_heads=n_heads, dropout=dropout)
             self.pos_ffn = PoswiseFeedForwardNet(embed_dim=embed_dim, d_ff=2048, dropout=dropout)
         elif attention_method == "ByChannel":
-            self.dec_enc_attn = Multi_Head_Attention(Q_dim=embed_dim, K_dim=196, QKVdim=64, n_heads=8, dropout=dropout)
+            self.dec_enc_attn = Multi_Head_Attention(Q_dim=embed_dim, K_dim=196, QKVdim=64, n_heads=n_heads, dropout=dropout)
             self.pos_ffn = PoswiseFeedForwardNet(embed_dim=embed_dim, d_ff=2048, dropout=dropout)
 
     def forward(self, dec_inputs, enc_outputs, dec_self_attn_mask, dec_enc_attn_mask):
@@ -117,13 +117,13 @@ class DecoderLayer(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, vocab_size, embed_dim, n_layers, dropout, attention_method):
+    def __init__(self, vocab_size, embed_dim, n_layers, dropout, attention_method, n_heads):
         super(Decoder, self).__init__()
         self.vocab_size = vocab_size
         self.tgt_emb = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
         self.pos_emb = nn.Embedding.from_pretrained(self.get_position_embedding_table(embed_dim), freeze=True)
         self.dropout = nn.Dropout(p=dropout)
-        self.layers = nn.ModuleList([DecoderLayer(embed_dim, dropout, attention_method) for _ in range(n_layers)])
+        self.layers = nn.ModuleList([DecoderLayer(embed_dim, dropout, attention_method, n_heads) for _ in range(n_layers)])
         self.projection = nn.Linear(embed_dim, vocab_size, bias=False).to(device)
         self.attention_method = attention_method
 
@@ -200,23 +200,23 @@ class Decoder(nn.Module):
 
 
 class EncoderLayer(nn.Module):
-    def __init__(self, dropout, attention_method):
+    def __init__(self, dropout, attention_method, n_heads):
         super(EncoderLayer, self).__init__()
         """
         In "Attention is all you need" paper, dk = dv = 64, h = 8, N=6
         """
         if attention_method == "ByPixel":
-            self.enc_self_attn = Multi_Head_Attention(Q_dim=2048, K_dim=2048, QKVdim=64, n_heads=8, dropout=dropout)
+            self.enc_self_attn = Multi_Head_Attention(Q_dim=2048, K_dim=2048, QKVdim=64, n_heads=n_heads, dropout=dropout)
             self.pos_ffn = PoswiseFeedForwardNet(embed_dim=2048, d_ff=4096, dropout=dropout)
         elif attention_method == "ByChannel":
-            self.enc_self_attn = Multi_Head_Attention(Q_dim=196, K_dim=196, QKVdim=64, n_heads=8, dropout=dropout)
+            self.enc_self_attn = Multi_Head_Attention(Q_dim=196, K_dim=196, QKVdim=64, n_heads=n_heads, dropout=dropout)
             self.pos_ffn = PoswiseFeedForwardNet(embed_dim=196, d_ff=512, dropout=dropout)
 
     def forward(self, enc_inputs, enc_self_attn_mask):
         """
         :param enc_inputs: [batch_size, num_pixels=196, 2048]
         :param enc_outputs: [batch_size, len_q=196, d_model=2048]
-        :return: attn: [batch_size, 8, 196, 196]
+        :return: attn: [batch_size, n_heads=8, 196, 196]
         """
         enc_outputs, attn = self.enc_self_attn(enc_inputs, enc_inputs, enc_inputs, enc_self_attn_mask)
         enc_outputs = self.pos_ffn(enc_outputs)
@@ -224,12 +224,12 @@ class EncoderLayer(nn.Module):
 
 
 class Encoder(nn.Module):
-    def __init__(self, n_layers, dropout, attention_method):
+    def __init__(self, n_layers, dropout, attention_method, n_heads):
         super(Encoder, self).__init__()
         if attention_method == "ByPixel":
             self.pos_emb = nn.Embedding.from_pretrained(self.get_position_embedding_table(), freeze=True)
         # self.dropout = nn.Dropout(p=dropout)
-        self.layers = nn.ModuleList([EncoderLayer(dropout, attention_method) for _ in range(n_layers)])
+        self.layers = nn.ModuleList([EncoderLayer(dropout, attention_method, n_heads) for _ in range(n_layers)])
         self.attention_method = attention_method
 
     def get_position_embedding_table(self):
@@ -271,10 +271,10 @@ class Transformer(nn.Module):
     In addition, apply dropout to the sums of the embeddings and the positional encodings in both the encoder
     and decoder stacks." (Now, we dont't apply dropout to the encoder embeddings)
     """
-    def __init__(self, vocab_size, embed_dim, n_layers, dropout=0.1, attention_method="ByPixel"):
+    def __init__(self, vocab_size, embed_dim, n_layers, dropout=0.1, attention_method="ByPixel", n_heads=8):
         super(Transformer, self).__init__()
-        self.encoder = Encoder(n_layers, dropout, attention_method)
-        self.decoder = Decoder(vocab_size, embed_dim, n_layers, dropout, attention_method)
+        self.encoder = Encoder(n_layers, dropout, attention_method, n_heads)
+        self.decoder = Decoder(vocab_size, embed_dim, n_layers, dropout, attention_method, n_heads)
         self.embedding = self.decoder.tgt_emb
         self.attention_method = attention_method
 
