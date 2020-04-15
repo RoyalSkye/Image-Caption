@@ -117,7 +117,7 @@ class DecoderLayer(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, vocab_size, embed_dim, n_layers, dropout, attention_method, n_heads):
+    def __init__(self, n_layers, vocab_size, embed_dim, dropout, attention_method, n_heads):
         super(Decoder, self).__init__()
         self.vocab_size = vocab_size
         self.tgt_emb = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
@@ -271,10 +271,10 @@ class Transformer(nn.Module):
     In addition, apply dropout to the sums of the embeddings and the positional encodings in both the encoder
     and decoder stacks." (Now, we dont't apply dropout to the encoder embeddings)
     """
-    def __init__(self, vocab_size, embed_dim, n_layers, dropout=0.1, attention_method="ByPixel", n_heads=8):
+    def __init__(self, vocab_size, embed_dim, encoder_layers, decoder_layers, dropout=0.1, attention_method="ByPixel", n_heads=8):
         super(Transformer, self).__init__()
-        self.encoder = Encoder(n_layers, dropout, attention_method, n_heads)
-        self.decoder = Decoder(vocab_size, embed_dim, n_layers, dropout, attention_method, n_heads)
+        self.encoder = Encoder(encoder_layers, dropout, attention_method, n_heads)
+        self.decoder = Decoder(decoder_layers, vocab_size, embed_dim, dropout, attention_method, n_heads)
         self.embedding = self.decoder.tgt_emb
         self.attention_method = attention_method
 
