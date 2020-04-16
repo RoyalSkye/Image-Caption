@@ -20,25 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="56b7ad64-4791-461f-b8c9-239a30ba0165" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/caption.py" beforeDir="false" afterPath="$PROJECT_DIR$/caption.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create_input_files.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_input_files.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasets.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/bleu/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/bleu/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/bleu/bleu.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/bleu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/bleu/bleu_scorer.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/bleu_scorer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/cider/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/cider/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/cider/cider.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/cider/cider.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/cider/cider_scorer.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/cider/cider_scorer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/meteor/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/meteor/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eval_func/rouge/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/rouge/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transformer.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +176,7 @@
       <workItem from="1586340393362" duration="1292000" />
       <workItem from="1586321445681" duration="24440000" />
       <workItem from="1586442533821" duration="14787000" />
-      <workItem from="1586672135070" duration="29633000" />
+      <workItem from="1586672135070" duration="31515000" />
     </task>
     <servers />
   </component>
@@ -233,10 +217,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="872" y="440" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1586687611965" />
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1586526406254">
+    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1587031613006">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586526406254" />
+    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1587031613006" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1587005911472">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -286,10 +270,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1586683711287" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1586878220428">
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1587025376916">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586878220428" />
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1587025376916" />
     <state x="720" y="398" key="com.jetbrains.plugins.remotesdk.ui.RemoteMappingsConfiguration" timestamp="1587005843280">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

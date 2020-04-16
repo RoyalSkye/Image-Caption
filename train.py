@@ -79,8 +79,8 @@ def train(args, train_loader, encoder, decoder, criterion, encoder_optimizer, de
             loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
         elif args.decoder_mode == "transformer":
             dec_alphas = alphas["dec_enc_attns"]
-            alpha_trans_c = args.alpha_c / (args.n_heads * args.n_layers)
-            for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
+            alpha_trans_c = args.alpha_c / (args.n_heads * args.decoder_layers)
+            for layer in range(args.decoder_layers):  # args.decoder_layers = len(dec_alphas)
                 cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
                 for h in range(args.n_heads):
                     cur_head_alpha = cur_layer_alphas[:, h, :, :]
@@ -168,8 +168,8 @@ def validate(args, val_loader, encoder, decoder, criterion):
                 loss += args.alpha_c * ((1. - alphas.sum(dim=1)) ** 2).mean()
             elif args.decoder_mode == "transformer":
                 dec_alphas = alphas["dec_enc_attns"]
-                alpha_trans_c = args.alpha_c / (args.n_heads * args.n_layers)
-                for layer in range(args.n_layers):  # args.n_layers = len(dec_alphas)
+                alpha_trans_c = args.alpha_c / (args.n_heads * args.decoder_layers)
+                for layer in range(args.decoder_layers):  # args.decoder_layers = len(dec_alphas)
                     cur_layer_alphas = dec_alphas[layer]  # [batch_size, n_heads, 52, 196]
                     for h in range(args.n_heads):
                         cur_head_alpha = cur_layer_alphas[:, h, :, :]
@@ -241,7 +241,8 @@ if __name__ == '__main__':
     parser.add_argument('--dropout', type=float, default=0.1, help='dropout')
     parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--attention_method', default="ByPixel", help='which attention method to use?')  # ByPixel or ByChannel
-    parser.add_argument('--n_layers', type=int, default=2, help='the number of layers of encoder and decoder Moudle in Transformer.')
+    parser.add_argument('--encoder_layers', type=int, default=2, help='the number of layers of encoder in Transformer.')
+    parser.add_argument('--decoder_layers', type=int, default=6, help='the number of layers of decoder in Transformer.')
     # Training parameters
     parser.add_argument('--epochs', type=int, default=100,
                         help='number of epochs to train for (if early stopping is not triggered).')
@@ -287,8 +288,9 @@ if __name__ == '__main__':
                                            vocab_size=len(word_map),
                                            dropout=args.dropout)
         elif args.decoder_mode == "transformer":
-            decoder = Transformer(vocab_size=len(word_map), embed_dim=args.emb_dim, n_layers=args.n_layers,
-                                  dropout=args.dropout, attention_method=args.attention_method, n_heads=args.n_heads)
+            decoder = Transformer(vocab_size=len(word_map), embed_dim=args.emb_dim, encoder_layers=args.encoder_layers,
+                                  decoder_layers=args.decoder_layers,dropout=args.dropout,
+                                  attention_method=args.attention_method, n_heads=args.n_heads)
 
         decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
                                              lr=args.decoder_lr)
@@ -336,6 +338,9 @@ if __name__ == '__main__':
     # Move to GPU, if available
     decoder = decoder.to(device)
     encoder = encoder.to(device)
+    print("encoder_layers {} decoder_layers {} n_heads {} dropout {} attention_method {} encoder_lr {} "
+          "decoder_lr {} alpha_c {}".format(args.encoder_layers, args.decoder_layers, args.n_heads, args.dropout,
+                                            args.attention_method, args.encoder_lr, args.decoder_lr, args.alpha_c))
     print(encoder)
     print(decoder)
 
