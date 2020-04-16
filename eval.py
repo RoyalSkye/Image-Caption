@@ -10,9 +10,6 @@ from nltk.translate.bleu_score import corpus_bleu
 import torch.nn.functional as F
 from tqdm import tqdm
 import argparse
-import os
-
-os.environ["CUDA_VISIBLE_DEVICES"] = '3'
 
 
 def evaluate_lstm(args):
@@ -241,7 +238,6 @@ def evaluate_transformer(args):
             assert len(references) == len(hypotheses)
 
     # Calculate BLEU1~4, METEOR, ROUGE_L, CIDEr scores
-    print('hypotheses{}'.format('='*20), hypotheses)
     metrics = get_eval_score(references, hypotheses)
 
     return metrics
@@ -249,13 +245,13 @@ def evaluate_transformer(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
-    parser.add_argument('--data_folder', default="/data2/lwl/image_dataset/dataset",
+    parser.add_argument('--data_folder', default="/Users/skye/docs/image_dataset/dataset",
                         help='folder with data files saved by create_input_files.py.')
     parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
-    parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
+    parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--beam_size', type=int, default=3, help='beam_size.')
-    parser.add_argument('--checkpoint', default="./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar",
+    parser.add_argument('--checkpoint', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar",
                         help='model checkpoint.')
     args = parser.parse_args()
 

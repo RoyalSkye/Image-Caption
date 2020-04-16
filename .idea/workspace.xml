@@ -20,9 +20,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="56b7ad64-4791-461f-b8c9-239a30ba0165" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caption.py" beforeDir="false" afterPath="$PROJECT_DIR$/caption.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create_input_files.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_input_files.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasets.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/bleu/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/bleu/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/bleu/bleu.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/bleu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/bleu/bleu_scorer.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/bleu/bleu_scorer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/cider/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/cider/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/cider/cider.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/cider/cider.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/cider/cider_scorer.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/cider/cider_scorer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/meteor/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/meteor/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eval_func/rouge/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eval_func/rouge/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transformer.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +48,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="JupyterTrust" id="dc09a9a1-bf77-4b2e-a69b-66505a3bf312" />
   <component name="ProjectId" id="1aFnpSITVPVbgtxTdCPW8iCAOEa" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -45,7 +62,7 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../assignment3/Assignment3/Tutorial2" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.caption">
@@ -175,7 +192,7 @@
       <workItem from="1586340393362" duration="1292000" />
       <workItem from="1586321445681" duration="24440000" />
       <workItem from="1586442533821" duration="14787000" />
-      <workItem from="1586672135070" duration="20906000" />
+      <workItem from="1586672135070" duration="29633000" />
     </task>
     <servers />
   </component>
@@ -220,72 +237,72 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586526406254" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1586672271403">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1587005911472">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1586672271403" />
-    <state width="1877" height="206" key="GridCell.Tab.0.bottom" timestamp="1586747626532">
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1587005911472" />
+    <state width="1877" height="206" key="GridCell.Tab.0.bottom" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
+    <state width="1877" height="206" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
     <state width="1807" height="765" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685691" />
-    <state width="1877" height="206" key="GridCell.Tab.0.center" timestamp="1586747626532">
+    <state width="1877" height="206" key="GridCell.Tab.0.center" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
+    <state width="1877" height="206" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
     <state width="1807" height="765" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685689" />
-    <state width="1877" height="206" key="GridCell.Tab.0.left" timestamp="1586747626532">
+    <state width="1877" height="206" key="GridCell.Tab.0.left" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
+    <state width="1877" height="206" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
     <state width="1807" height="765" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685687" />
-    <state width="1877" height="206" key="GridCell.Tab.0.right" timestamp="1586747626532">
+    <state width="1877" height="206" key="GridCell.Tab.0.right" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626532" />
+    <state width="1877" height="206" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
     <state width="1807" height="765" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1586341685690" />
-    <state width="1877" height="206" key="GridCell.Tab.1.bottom" timestamp="1586747626533">
+    <state width="1877" height="206" key="GridCell.Tab.1.bottom" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
-    <state width="1877" height="206" key="GridCell.Tab.1.center" timestamp="1586747626533">
+    <state width="1877" height="206" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
+    <state width="1877" height="206" key="GridCell.Tab.1.center" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
-    <state width="1877" height="206" key="GridCell.Tab.1.left" timestamp="1586747626533">
+    <state width="1877" height="206" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
+    <state width="1877" height="206" key="GridCell.Tab.1.left" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
-    <state width="1877" height="206" key="GridCell.Tab.1.right" timestamp="1586747626533">
+    <state width="1877" height="206" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
+    <state width="1877" height="206" key="GridCell.Tab.1.right" timestamp="1587005871278">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="206" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586747626533" />
-    <state x="430" y="158" key="SettingsEditor" timestamp="1586672286785">
+    <state width="1877" height="206" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587005871278" />
+    <state x="430" y="158" key="SettingsEditor" timestamp="1587005885876">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="430" y="158" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1586672286785" />
+    <state x="430" y="158" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1587005885876" />
     <state x="482" y="187" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1586340642517" />
     <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1586683711287">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1586683711287" />
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1586676607852">
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1586878220428">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586676607852" />
-    <state x="720" y="398" key="com.jetbrains.plugins.remotesdk.ui.RemoteMappingsConfiguration" timestamp="1586672285466">
+    <state x="92" y="92" width="1736" height="856" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586878220428" />
+    <state x="720" y="398" key="com.jetbrains.plugins.remotesdk.ui.RemoteMappingsConfiguration" timestamp="1587005843280">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="720" y="398" key="com.jetbrains.plugins.remotesdk.ui.RemoteMappingsConfiguration/0.0.1920.1040@0.0.1920.1040" timestamp="1586672285466" />
+    <state x="720" y="398" key="com.jetbrains.plugins.remotesdk.ui.RemoteMappingsConfiguration/0.0.1920.1040@0.0.1920.1040" timestamp="1587005843280" />
     <state x="595" y="239" width="730" height="801" key="find.popup" timestamp="1586506857579">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="595" y="239" width="730" height="801" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1586506857579" />
     <state x="641" y="283" width="704" height="538" key="find.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1586340925082" />
-    <state x="935" y="255" width="317" height="539" key="ftp.server.browser" timestamp="1586672333574">
+    <state x="935" y="255" width="317" height="539" key="ftp.server.browser" timestamp="1587005822064">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="935" y="255" width="317" height="539" key="ftp.server.browser/0.0.1920.1040@0.0.1920.1040" timestamp="1586672333574" />
+    <state x="935" y="255" width="317" height="539" key="ftp.server.browser/0.0.1920.1040@0.0.1920.1040" timestamp="1587005822064" />
     <state x="969" y="285" key="ftp.server.browser/67.27.1853.1053@67.27.1853.1053" timestamp="1586340625381" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1586508039904">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -297,22 +314,22 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/eval.py</url>
-          <line>118</line>
+          <line>112</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/eval.py</url>
-          <line>158</line>
+          <line>152</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/eval.py</url>
-          <line>182</line>
+          <line>176</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/eval.py</url>
-          <line>240</line>
+          <line>234</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -347,12 +364,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/eval.py</url>
-          <line>197</line>
+          <line>194</line>
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/eval.py</url>
-          <line>89</line>
+          <line>86</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
