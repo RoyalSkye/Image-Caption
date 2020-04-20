@@ -276,7 +276,7 @@ if __name__ == '__main__':
 
     # Initialize / load checkpoint
     if args.checkpoint is None:
-        encoder = CNN_Encoder()
+        encoder = CNN_Encoder(attention_method=args.attention_method)
         encoder.fine_tune(args.fine_tune_encoder)
         encoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, encoder.parameters()),
                                              lr=args.encoder_lr) if args.fine_tune_encoder else None
@@ -289,7 +289,7 @@ if __name__ == '__main__':
                                            dropout=args.dropout)
         elif args.decoder_mode == "transformer":
             decoder = Transformer(vocab_size=len(word_map), embed_dim=args.emb_dim, encoder_layers=args.encoder_layers,
-                                  decoder_layers=args.decoder_layers,dropout=args.dropout,
+                                  decoder_layers=args.decoder_layers, dropout=args.dropout,
                                   attention_method=args.attention_method, n_heads=args.n_heads)
 
         decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),

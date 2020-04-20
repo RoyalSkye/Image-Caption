@@ -3,6 +3,7 @@ from torch import nn
 import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+channel_number = 512
 
 
 class ScaledDotProductAttention(nn.Module):
@@ -101,7 +102,7 @@ class DecoderLayer(nn.Module):
             self.pos_ffn = PoswiseFeedForwardNet(embed_dim=embed_dim, d_ff=2048, dropout=dropout)
         elif attention_method == "ByChannel":
             self.dec_enc_attn = Multi_Head_Attention(Q_dim=embed_dim, K_dim=196, QKVdim=64, n_heads=n_heads, dropout=dropout)
-            self.pos_ffn = PoswiseFeedForwardNet(embed_dim=embed_dim, d_ff=2048, dropout=dropout)
+            self.pos_ffn = PoswiseFeedForwardNet(embed_dim=embed_dim, d_ff=2048, dropout=dropout)  # need to change
 
     def forward(self, dec_inputs, enc_outputs, dec_self_attn_mask, dec_enc_attn_mask):
         """
@@ -187,7 +188,7 @@ class Decoder(nn.Module):
         if self.attention_method == "ByPixel":
             dec_enc_attn_mask = (torch.tensor(np.zeros((batch_size, 52, 196))).to(device) == torch.tensor(np.ones((batch_size, 52, 196))).to(device))
         elif self.attention_method == "ByChannel":
-            dec_enc_attn_mask = (torch.tensor(np.zeros((batch_size, 52, 2048))).to(device) == torch.tensor(np.ones((batch_size, 52, 2048))).to(device))
+            dec_enc_attn_mask = (torch.tensor(np.zeros((batch_size, 52, channel_number))).to(device) == torch.tensor(np.ones((batch_size, 52, channel_number))).to(device))
 
         dec_self_attns, dec_enc_attns = [], []
         for layer in self.layers:

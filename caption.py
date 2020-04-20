@@ -195,13 +195,13 @@ def visualize_att(image_path, seq, alphas, rev_word_map, path, smooth=True):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
-    parser.add_argument('--img', '-i', default="/Users/skye/docs/image_dataset/val2014/COCO_val2014_000000000520.jpg", help='path to image')
+    parser.add_argument('--img', '-i', default="/Users/skye/docs/image_dataset/val2014/COCO_val2014_000000581422.jpg", help='path to image')
     parser.add_argument('--model', '-m', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
     parser.add_argument('--word_map', '-wm', default="/Users/skye/docs/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
                         help='path to word map JSON')
-    parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
+    parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--save_img_dir', '-p', default="./caption", help='path to save annotated img.')
-    parser.add_argument('--beam_size', '-b', default=3, type=int, help='beam size for beam search')
+    parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size for beam search')
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
     args = parser.parse_args()
 
