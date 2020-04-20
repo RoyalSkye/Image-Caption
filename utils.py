@@ -3,10 +3,12 @@ import numpy as np
 import h5py
 import json
 import torch
-from scipy.misc import imread, imresize
+# from scipy.misc import imread, imresize
 from tqdm import tqdm
 from collections import Counter
 from random import seed, choice, sample
+import imageio
+from PIL import Image
 
 from eval_func.bleu.bleu import Bleu
 from eval_func.rouge.rouge import Rouge
@@ -120,12 +122,14 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                 assert len(captions) == captions_per_image
 
                 # Read images
-                img = imread(impaths[i])
+                img = imageio.imread(impaths[i])
+                # img = imread(impaths[i])
                 if len(img.shape) == 2:
                     # gray-scale
                     img = img[:, :, np.newaxis]
                     img = np.concatenate([img, img, img], axis=2)  # [256, 256, 1+1+1]
-                img = imresize(img, (256, 256))
+                img = np.array(Image.fromarray(img).resize((256, 256)))
+                # img = imresize(img, (256, 256))
                 img = img.transpose(2, 0, 1)
                 assert img.shape == (3, 256, 256)
                 assert np.max(img) <= 255
