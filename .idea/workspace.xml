@@ -44,8 +44,13 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../assignment3/Assignment3/Tutorial2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/data" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\NTU\NLP\ImageCaption\Image-Caption\data" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.caption">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
@@ -74,6 +79,9 @@
       <module name="Image-Caption" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -93,6 +101,9 @@
       <module name="Image-Caption" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -174,7 +185,9 @@
       <workItem from="1586340393362" duration="1292000" />
       <workItem from="1586321445681" duration="24440000" />
       <workItem from="1586442533821" duration="14787000" />
-      <workItem from="1586672135070" duration="32908000" />
+      <workItem from="1586672135070" duration="33722000" />
+      <workItem from="1587084705506" duration="604000" />
+      <workItem from="1587088026891" duration="1285000" />
     </task>
     <servers />
   </component>
@@ -201,6 +214,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="178" key="#Deployment" timestamp="1586674631352">
