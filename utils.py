@@ -219,7 +219,7 @@ def clip_gradient(optimizer, grad_clip):
 
 
 def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
-                    metrics, is_best):
+                    metrics, is_best, final_args):
     """
     Saves model checkpoint.
 
@@ -239,7 +239,8 @@ def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder
              'encoder': encoder,
              'decoder': decoder,
              'encoder_optimizer': encoder_optimizer,
-             'decoder_optimizer': decoder_optimizer}
+             'decoder_optimizer': decoder_optimizer,
+             'final_args': final_args}
     filename = 'checkpoint_' + data_name + '.pth.tar'
     torch.save(state, filename)
     # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
@@ -321,3 +322,12 @@ def get_eval_score(references, hypotheses):
     score_dict = dict(zip(method, score))
 
     return score_dict
+
+
+def convert2words(sequences, rev_word_map):
+    for l1 in sequences:
+        caption = ""
+        for l2 in l1:
+            caption += rev_word_map[l2]
+            caption += " "
+        print(caption)

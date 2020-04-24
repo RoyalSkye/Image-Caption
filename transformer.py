@@ -252,7 +252,7 @@ class Encoder(nn.Module):
         """
         batch_size = encoder_out.size(0)
         positions = encoder_out.size(1)
-        if self.attention_method=="ByPixel":
+        if self.attention_method == "ByPixel":
             encoder_out = encoder_out + self.pos_emb(torch.LongTensor([list(range(positions))]*batch_size).to(device))
         # encoder_out = self.dropout(encoder_out)
         # enc_self_attn_mask: [batch_size, 196, 196]
@@ -288,7 +288,7 @@ class Transformer(nn.Module):
 
     def forward(self, enc_inputs, encoded_captions, caption_lengths):
         """
-        preprocess: enc_inputs:[batch_size, 14, 14, 2048]/[batch_size, 196, 2048] -> [batch_size, 196, 2048]
+        preprocess: enc_inputs: [batch_size, 14, 14, 2048]/[batch_size, 196, 2048] -> [batch_size, 196, 2048]
         encoded_captions: [batch_size, 52]
         caption_lengths: [batch_size, 1], not used
         The encoder or decoder is composed of a stack of n_layers=6 identical layers.

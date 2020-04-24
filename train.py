@@ -255,12 +255,22 @@ if __name__ == '__main__':
     parser.add_argument('--grad_clip', type=float, default=5., help='clip gradients at an absolute value of.')
     parser.add_argument('--alpha_c', type=float, default=1.,
                         help='regularization parameter for doubly stochastic attention, as in the paper.')
-    parser.add_argument('--fine_tune_encoder', default=False, help='whether fine-tune encoder or not')
-    parser.add_argument('--fine_tune_embedding', default=True, help='whether fine-tune word embeddings or not')
+    parser.add_argument('--fine_tune_encoder', type=bool, default=False, help='whether fine-tune encoder or not')
+    parser.add_argument('--fine_tune_embedding', type=bool, default=True, help='whether fine-tune word embeddings or not')
     parser.add_argument('--checkpoint', default=None, help='path to checkpoint, None if none.')
-    # parser.add_argument('--checkpoint', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to checkpoint, None if none.')
     parser.add_argument('--embedding_path', default=None, help='path to pre-trained word Embedding.')
     args = parser.parse_args()
+
+    # load checkpoint, these parameters can't be modified
+    final_args = {"emb_dim": args.emb_dim,
+                 "attention_dim": args.attention_dim,
+                 "decoder_dim": args.decoder_dim,
+                 "n_heads": args.n_heads,
+                 "dropout": args.dropout,
+                 "decoder_mode": args.decoder_mode,
+                 "attention_method": args.attention_method,
+                 "encoder_layers": args.encoder_layers,
+                 "decoder_layers": args.decoder_layers}
 
     start_epoch = 0
     best_bleu4 = 0.  # BLEU-4 score right now
@@ -322,7 +332,7 @@ if __name__ == '__main__':
             print('Loaded {} pre-trained word embeddings.'.format(len(word_embeds)))
 
     else:
-        checkpoint = torch.load(args.checkpoint)
+        checkpoint = torch.load(args.checkpoint, map_location=str(device))
         start_epoch = checkpoint['epoch'] + 1
         epochs_since_improvement = checkpoint['epochs_since_improvement']
         best_bleu4 = checkpoint['metrics']["Bleu_4"]
@@ -330,7 +340,12 @@ if __name__ == '__main__':
         encoder_optimizer = checkpoint['encoder_optimizer']
         decoder = checkpoint['decoder']
         decoder_optimizer = checkpoint['decoder_optimizer']
+        # load final_args from checkpoint
+        final_args = checkpoint['final_args']
+        for key in final_args.keys():
+            args.__setattr__(key, final_args[key])
         if args.fine_tune_encoder is True and encoder_optimizer is None:
+            print("Encoder_Optimizer is None, Creating new Encoder_Optimizer!")
             encoder.fine_tune(args.fine_tune_encoder)
             encoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, encoder.parameters()),
                                                  lr=args.encoder_lr)
@@ -370,7 +385,8 @@ if __name__ == '__main__':
             break
         if epochs_since_improvement > 0 and epochs_since_improvement % 5 == 0:
             adjust_learning_rate(decoder_optimizer, 0.8)
-            if args.fine_tune_encoder:
+            if args.fine_tune_encoder and encoder_optimizer is not None:
+                print(encoder_optimizer)
                 adjust_learning_rate(encoder_optimizer, 0.8)
 
         # One epoch's training
@@ -392,4 +408,4 @@ if __name__ == '__main__':
 
         # Save checkpoint
         save_checkpoint(args.data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer,
-                        decoder_optimizer, metrics, is_best)
+                        decoder_optimizer, metrics, is_best, final_args)

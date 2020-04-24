@@ -95,6 +95,11 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
             scores = scores[:, step - 1, :].squeeze(1)  # [s, 1, vocab_size] -> [s, vocab_size]
             # choose the last layer, transformer decoder is comosed of a stack of 6 identical layers.
             alpha = alpha_dict["dec_enc_attns"][-1]  # [s, n_heads=8, len_q=52, len_k=196]
+            # TODO: AVG Attention to Visualize
+            # for i in range(len(alpha_dict["dec_enc_attns"])):
+            #     n_heads = alpha_dict["dec_enc_attns"][i].size(1)
+            #     for j in range(n_heads):
+            #         pass
             # the second dim corresponds to the Multi-head attention = 8, now 0
             # the third dim corresponds to cur caption position
             alpha = alpha[:, 0, step-1, :].view(k, 1, enc_image_size, enc_image_size)  # [s, 1, enc_image_size, enc_image_size]
@@ -198,13 +203,13 @@ def visualize_att(image_path, seq, alphas, rev_word_map, path, smooth=True):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
-    parser.add_argument('--img', '-i', default="/Users/skye/docs/image_dataset/val2014/COCO_val2014_000000581422.jpg", help='path to image')
-    parser.add_argument('--model', '-m', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar", help='path to model')
+    parser.add_argument('--img', '-i', default="/Users/skye/docs/caption", help='path to image, file or folder')
+    parser.add_argument('--model', '-m', default="/Users/skye/docs/image_dataset/1.pth.tar", help='path to model')
     parser.add_argument('--word_map', '-wm', default="/Users/skye/docs/image_dataset/dataset/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json",
                         help='path to word map JSON')
     parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--save_img_dir', '-p', default="./caption", help='path to save annotated img.')
-    parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size for beam search')
+    parser.add_argument('--beam_size', '-b', type=int, default=3, help='beam size for beam search')
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
     args = parser.parse_args()
 
@@ -228,13 +233,27 @@ if __name__ == '__main__':
     rev_word_map = {v: k for k, v in word_map.items()}  # ix2word
 
     # Encode, decode with attention and beam search
-    with torch.no_grad():
-        seq, alphas = caption_image_beam_search(args, encoder, decoder, args.img, word_map)
-        alphas = torch.FloatTensor(alphas)
+    if os.path.isdir(args.img):
+        for file in os.listdir(args.img):
+            file = os.path.join(args.img, file)
+            with torch.no_grad():
+                seq, alphas = caption_image_beam_search(args, encoder, decoder, file, word_map)
+                alphas = torch.FloatTensor(alphas)
 
-    if not (os.path.exists(args.save_img_dir) and os.path.isdir(args.save_img_dir)):
-        os.makedirs(args.save_img_dir)
-    timestamp = str(int(time.time()))
-    path = args.save_img_dir + "/" + timestamp + ".png"
-    # Visualize caption and attention of best sequence
-    visualize_att(args.img, seq, alphas, rev_word_map, path, args.smooth)
+            if not (os.path.exists(args.save_img_dir) and os.path.isdir(args.save_img_dir)):
+                os.makedirs(args.save_img_dir)
+            timestamp = str(int(time.time()))
+            path = args.save_img_dir + "/" + timestamp + ".png"
+            # Visualize caption and attention of best sequence
+            visualize_att(file, seq, alphas, rev_word_map, path, args.smooth)
+    else:
+        with torch.no_grad():
+            seq, alphas = caption_image_beam_search(args, encoder, decoder, args.img, word_map)
+            alphas = torch.FloatTensor(alphas)
+
+        if not (os.path.exists(args.save_img_dir) and os.path.isdir(args.save_img_dir)):
+            os.makedirs(args.save_img_dir)
+        timestamp = str(int(time.time()))
+        path = args.save_img_dir + "/" + timestamp + ".png"
+        # Visualize caption and attention of best sequence
+        visualize_att(args.img, seq, alphas, rev_word_map, path, args.smooth)

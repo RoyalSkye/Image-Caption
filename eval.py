@@ -237,6 +237,11 @@ def evaluate_transformer(args):
             hypotheses.append([w for w in seq if w not in {word_map['<start>'], word_map['<end>'], word_map['<pad>']}])
             assert len(references) == len(hypotheses)
 
+    # convert id to words
+    # for i in references:
+    #     convert2words(i, rev_word_map)
+    # convert2words(hypotheses, rev_word_map)
+
     # Calculate BLEU1~4, METEOR, ROUGE_L, CIDEr scores
     metrics = get_eval_score(references, hypotheses)
 
@@ -249,9 +254,9 @@ if __name__ == '__main__':
                         help='folder with data files saved by create_input_files.py.')
     parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
-    parser.add_argument('--decoder_mode', default="lstm", help='which model does decoder use?')  # lstm or transformer
+    parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--beam_size', type=int, default=3, help='beam_size.')
-    parser.add_argument('--checkpoint', default="/Users/skye/docs/image_dataset/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar",
+    parser.add_argument('--checkpoint', default="/Users/skye/docs/image_dataset/1.pth.tar",
                         help='model checkpoint.')
     args = parser.parse_args()
 
@@ -268,13 +273,14 @@ if __name__ == '__main__':
     encoder = checkpoint['encoder']
     encoder = encoder.to(device)
     encoder.eval()
-    print(encoder)
-    print(decoder)
+    # print(encoder)
+    # print(decoder)
 
     # Load word map (word2id)
     with open(word_map_file, 'r') as j:
         word_map = json.load(j)
     vocab_size = len(word_map)
+    rev_word_map = {v: k for k, v in word_map.items()}  # ix2word
 
     # Normalization transform
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
