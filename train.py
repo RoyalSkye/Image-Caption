@@ -234,14 +234,14 @@ if __name__ == '__main__':
     parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
     # Model parameters
-    parser.add_argument('--emb_dim', type=int, default=512, help='dimension of word embeddings.')
+    parser.add_argument('--emb_dim', type=int, default=300, help='dimension of word embeddings.')
     parser.add_argument('--attention_dim', type=int, default=512, help='dimension of attention linear layers.')
     parser.add_argument('--decoder_dim', type=int, default=512, help='dimension of decoder RNN.')
     parser.add_argument('--n_heads', type=int, default=8, help='Multi-head attention.')
     parser.add_argument('--dropout', type=float, default=0.1, help='dropout')
     parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--attention_method', default="ByPixel", help='which attention method to use?')  # ByPixel or ByChannel
-    parser.add_argument('--encoder_layers', type=int, default=2, help='the number of layers of encoder in Transformer.')
+    parser.add_argument('--encoder_layers', type=int, default=6, help='the number of layers of encoder in Transformer.')
     parser.add_argument('--decoder_layers', type=int, default=6, help='the number of layers of decoder in Transformer.')
     # Training parameters
     parser.add_argument('--epochs', type=int, default=100,
@@ -256,7 +256,7 @@ if __name__ == '__main__':
     parser.add_argument('--alpha_c', type=float, default=1.,
                         help='regularization parameter for doubly stochastic attention, as in the paper.')
     parser.add_argument('--fine_tune_encoder', type=bool, default=False, help='whether fine-tune encoder or not')
-    parser.add_argument('--fine_tune_embedding', type=bool, default=True, help='whether fine-tune word embeddings or not')
+    parser.add_argument('--fine_tune_embedding', type=bool, default=False, help='whether fine-tune word embeddings or not')
     parser.add_argument('--checkpoint', default=None, help='path to checkpoint, None if none.')
     parser.add_argument('--embedding_path', default=None, help='path to pre-trained word Embedding.')
     args = parser.parse_args()
@@ -340,6 +340,7 @@ if __name__ == '__main__':
         encoder_optimizer = checkpoint['encoder_optimizer']
         decoder = checkpoint['decoder']
         decoder_optimizer = checkpoint['decoder_optimizer']
+        decoder.fine_tune_embeddings(args.fine_tune_embedding)
         # load final_args from checkpoint
         final_args = checkpoint['final_args']
         for key in final_args.keys():
