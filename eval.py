@@ -250,13 +250,13 @@ def evaluate_transformer(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
-    parser.add_argument('--data_folder', default="/Users/skye/docs/image_dataset/dataset",
+    parser.add_argument('--data_folder', default="./dataset/generated_data",
                         help='folder with data files saved by create_input_files.py.')
     parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
     parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--beam_size', type=int, default=3, help='beam_size.')
-    parser.add_argument('--checkpoint', default="/Users/skye/docs/image_dataset/1.pth.tar",
+    parser.add_argument('--checkpoint', default="./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar",
                         help='model checkpoint.')
     args = parser.parse_args()
 

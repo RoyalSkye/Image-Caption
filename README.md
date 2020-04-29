@@ -12,8 +12,8 @@
 - [x] [self-attentiion:Transformer](https://github.com/huggingface/transformers)
 - [x]  Glove pre-trained word embedding
 - [x] [Multi-Eva metrics](https://github.com/tylin/coco-caption)
-- [ ] Human evaluation
-- [ ] Tune parameters of Transformer
+- [x] Human evaluation
+- [x] Tune parameters of Transformer
 
 ### Requirements
 

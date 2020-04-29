@@ -229,7 +229,7 @@ def validate(args, val_loader, encoder, decoder, criterion):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Image_Captioning')
     # Data parameters
-    parser.add_argument('--data_folder', default="/Users/skye/docs/image_dataset/dataset",
+    parser.add_argument('--data_folder', default="./dataset/generated_data",
                         help='folder with data files saved by create_input_files.py.')
     parser.add_argument('--data_name', default="coco_5_cap_per_img_5_min_word_freq",
                         help='base name shared by data files.')
@@ -241,7 +241,7 @@ if __name__ == '__main__':
     parser.add_argument('--dropout', type=float, default=0.1, help='dropout')
     parser.add_argument('--decoder_mode', default="transformer", help='which model does decoder use?')  # lstm or transformer
     parser.add_argument('--attention_method', default="ByPixel", help='which attention method to use?')  # ByPixel or ByChannel
-    parser.add_argument('--encoder_layers', type=int, default=6, help='the number of layers of encoder in Transformer.')
+    parser.add_argument('--encoder_layers', type=int, default=2, help='the number of layers of encoder in Transformer.')
     parser.add_argument('--decoder_layers', type=int, default=6, help='the number of layers of decoder in Transformer.')
     # Training parameters
     parser.add_argument('--epochs', type=int, default=100,
