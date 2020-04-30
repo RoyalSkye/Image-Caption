@@ -13,6 +13,7 @@ import argparse
 # from scipy.misc import imread, imresize
 import imageio
 from PIL import Image
+import transformer, models
 
 
 def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
@@ -177,6 +178,7 @@ def visualize_att(image_path, seq, alphas, rev_word_map, path, smooth=True):
     image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
 
     words = [rev_word_map[ind] for ind in seq]
+    print(words)
 
     for t in range(len(words)):
         if t > 50:
@@ -213,7 +215,10 @@ if __name__ == '__main__':
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
     args = parser.parse_args()
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # Note: Must use "CPU"
+    device = torch.device("cpu")
+    transformer.device = torch.device("cpu")
+    models.device = torch.device("cpu")
     print(device)
 
     # Load model
@@ -224,8 +229,8 @@ if __name__ == '__main__':
     encoder = checkpoint['encoder']
     encoder = encoder.to(device)
     encoder.eval()
-    print(encoder)
-    print(decoder)
+    # print(encoder)
+    # print(decoder)
 
     # Load word map (word2ix)
     with open(args.word_map, 'r') as j:

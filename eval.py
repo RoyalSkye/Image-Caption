@@ -10,6 +10,7 @@ from nltk.translate.bleu_score import corpus_bleu
 import torch.nn.functional as F
 from tqdm import tqdm
 import argparse
+import transformer, models
 
 
 def evaluate_lstm(args):
@@ -234,13 +235,22 @@ def evaluate_transformer(args):
                     img_caps))  # remove <start> and pads
             references.append(img_captions)
             # Hypotheses
+            # tmp_hyp = [w for w in seq if w not in {word_map['<start>'], word_map['<end>'], word_map['<pad>']}]
             hypotheses.append([w for w in seq if w not in {word_map['<start>'], word_map['<end>'], word_map['<pad>']}])
             assert len(references) == len(hypotheses)
-
-    # convert id to words
-    # for i in references:
-    #     convert2words(i, rev_word_map)
-    # convert2words(hypotheses, rev_word_map)
+            # Print References, Hypotheses and metrics every step
+            # words = []
+            # # print('*' * 10 + 'ImageCaptions' + '*' * 10, len(img_captions))
+            # for seq in img_captions:
+            #     words.append([rev_word_map[ind] for ind in seq])
+            # for i, seq in enumerate(words):
+            #     print('Reference{}: '.format(i), seq)
+            # print('Hypotheses: ', [rev_word_map[ind] for ind in tmp_hyp])
+            # metrics = get_eval_score([img_captions], [tmp_hyp])
+            # print("{} - beam size {}: BLEU-1 {} BLEU-2 {} BLEU-3 {} BLEU-4 {} METEOR {} ROUGE_L {} CIDEr {}".format
+            #       (args.decoder_mode, args.beam_size, metrics["Bleu_1"], metrics["Bleu_2"], metrics["Bleu_3"],
+            #        metrics["Bleu_4"],
+            #        metrics["METEOR"], metrics["ROUGE_L"], metrics["CIDEr"]))
 
     # Calculate BLEU1~4, METEOR, ROUGE_L, CIDEr scores
     metrics = get_eval_score(references, hypotheses)
@@ -261,7 +271,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     word_map_file = os.path.join(args.data_folder, 'WORDMAP_' + args.data_name + '.json')
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # Note: Must use "CPU"
+    device = torch.device("cpu")
+    transformer.device = torch.device("cpu")
+    models.device = torch.device("cpu")
     cudnn.benchmark = True  # set to true only if inputs to model are fixed size; otherwise lot of computational overhead
     print(device)
 
