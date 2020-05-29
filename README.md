@@ -153,7 +153,7 @@ $ ./create_input_files.py --karpathy_json_path="./dataset/caption_dataset/datase
 │   └── val2014
 ```
 
-**Training: **Train model from scratch, or resume training at a checkpoint by point to the corresponding file with the checkpoint parameter. We will use the default value and dataset path. The commands are shown below:
+**Training:** Train model from scratch, or resume training at a checkpoint by point to the corresponding file with the checkpoint parameter. We will use the default value and dataset path. The commands are shown below:
 
 > CNN_LSTM: Train model from scratch without pre-trained Embedding, attention method is `ByPixel`
 >
