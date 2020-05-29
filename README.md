@@ -1,7 +1,5 @@
 ## Image Captioning
 
-[TOC]
-
 ### Section 1: Run
 
 #### 1.1 Dataset
@@ -199,10 +197,11 @@ $ ./caption.py --img="./dataset/val2014/COCO_val2014_000000581886.jpg" --decoder
 
 Benefited by advanced methods based on deep neural networks, machine translation has made great progress. The convolutional neural network, recurrent neural network, LSTM and attention are pushing the processing of natural language further. This advance also attracts much research combining natural language processing. Typically, image captioning surges in recent study, which integrates both computer vision and natural language processing tasks. Certainly, it also benefits from the large dataset. Image captioning can also be regarded as a machine translation task, which requires to translate image information into natural language.
 
-<div  align="center">    
-	<img src="./img/1.png" style="zoom:50%" />
-  <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">Figure 1: Image Captioning</center>
-</div>
+<p align="center">
+  <img src="./img/1.png" alt="Editor" width="350"/></br>
+  Figure 1: Image Captioning
+</p>
+
 Literally, image caption means capturing the information in the images and then express it using natural language. The information from an image can be seen as the source sequence, by which using a language model to decode this encoded information and generate target sentences constrained. The end-to-end training is the current mainstream method for deep neural network-based models and encoder-decoder architecture is mainly used for sequence-to-sequence learning. RNN, LSTM and attention are mainly used to generate sequences.
 
 Considering the gradient vanishing problem with RNN and information would also be diluted in the long term in LSTM, we adopt the transformer [1] as our decoder to handle this task and LSTM-based method is used as our baseline. The fact that attention exists in human visual system [2, 3] suggests the efficient way of representing. Transformer is exactly using attention to help the model learn *where* to look. As generating a caption, word by word, *Attention allows the* model’s gaze shift across the image, by focusing on the part of the image most relevant to the word it is going to utter next. 
@@ -243,10 +242,10 @@ The output size of CNN encoder is (Batch, 2048, 14, 14), but if the attention me
 
 The process of decoding shows in the picture below.
 
-<div  align="center">    
-	<img src="./img/2.png" style="zoom:70%" />
-  <center style="font-size:14px;color:#C0C0C0;text-decoration:underline"><a href="https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning">Figure 2: CNN-LSTM</a></center>
-</div>
+<p align="center">   
+  <img src="./img/2.png" alt="Editor" width="800" /></br>
+  <a href="https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning">Figure 2: CNN-LSTM</a>
+</p>
 
 After CNN encoder, an image shaped in (14, 14, 2048) is split into 196 2048-dimensional vectors as the keys for every step of decoder words' queries. The initial hidden layer h0 (as well as cell layer c0) is obtained by transforming image features. The specific process is averaging the CNN encoder output features on the first two dimensions to get a (1, 1, 2048) tensor and squeeze it into a 2048-dimensional vector. Then two different linear layers were utilized to obtain the initial hidden layer h0 and cell layer c0.
 
@@ -268,28 +267,30 @@ The output size of an image features extracted by the CNN encoder is (14, 14, 20
 
 Because different from sequences, every image feature has two dimension, so our approach of positional-encoding is a kind of spatial-encoding. There are 14x14 pixels we need to encode, and for every pixel we need to form a 2048-dimensional vector as its positional-encoding. Suppose the pixel is in the position (x,y) (0≤x,y≤13), we form a 1024-dimensional vector to represent its vertical position x feature, and form another 1024-dimensional vector to represent its horizontal position y feature, then concatenate these two vectors to obtain its final 2048-dimensional position feature vector. As well as encoder input, the decoder input of transformer needs positional-encoding. The method for transformer decoder input vector positional-encoding is a usual method.
 Decoder positional-encoding:
-$$
-PE(pos,2i)=sin(pos/10000^{\frac{2i}{embedding\_dim}}), \ PE(pos,2i+1)=cos(pos/10000^{\frac{2i}{embedding\_dim}})
-$$
+
+<p align="center">
+  <img src="https://latex.codecogs.com/svg.latex?PE%28pos%2C2i%29%3Dsin%28pos/10000%5E%7B%5Cfrac%7B2i%7D%7Bembedding_dim%7D%7D%29%2C%20%5C%20PE%28pos%2C2i+1%29%3Dcos%28pos/10000%5E%7B%5Cfrac%7B2i%7D%7Bembedding_dim%7D%7D%29" alt="Editor" />
+</p>
 
 Encoder positional-encoding:
 
-$$
-PE(pos=(x,y),i)=sin(x/10000^{\frac{i}{1024}})
-$$
+<p align="center">
+  <img src="https://latex.codecogs.com/svg.latex?PE%28pos%3D%28x%2Cy%29%2Ci%29%3Dsin%28x/10000%5E%7B%5Cfrac%7Bi%7D%7B1024%7D%7D%29" alt="Editor" />
+</p>
 
-$$
-PE(pos=(x,y),i+1024)=cos(x/10000^{\frac{1}{1024}})
-$$
+<p align="center">
+  <img src="https://latex.codecogs.com/svg.latex?PE%28pos%3D%28x%2Cy%29%2Ci+1024%29%3Dcos%28x/10000%5E%7B%5Cfrac%7B1%7D%7B1024%7D%7D%29" alt="Editor" />
+</p>
 
 After positional-encoding, encoded image features will be put into transformer encoder to obtain transformer encoded feature. When training, the whole target captions will put into decoder part of transformer to obtain predictions for all sequence positions. This is different from LSTM which could only predict one next word when training. And in real training, transformer is quite faster than LSTM. When making caption of evaluating, it is same as LSTM, we could only predict one word from the previous generated word for every step. 
 
 Figure 3 shows the structure of our transformer:
 
-<div  align="center">    
-	<img src="./img/3.png" style="zoom:45%" />
-  <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">Figure 3: Structure of Transformer</center>
-</div>
+<p align="center">   
+  <img src="./img/3.png" alt="Editor" width="500" /></br>
+  Figure 3: Structure of Transformer
+</p>
+
 Where M, N is the number of transformer encoder and decoder layer respectively. K, V, Q are keys, values and queries which dim could be predesigned. Output Embedding is word embedding and its size would be specified before training. In our training, we used a glove.300d to be a pre-trained word embedding.
 
 ##### 3.3.3 By Channel
@@ -298,20 +299,27 @@ By Channel attention method has only a few differences from by pixel. As previou
 
 By the way, the main reason of decreasing image features, is to solve the problem of memory overflow error. We thought of three methods to solve it, one is decreasing the QKVdim (attention dimension) or heads number of multi-head attention, another is decreasing batchsize or add more dropout, but we finally thought that decreasing the feature is more effective than others, and presented faster training speed.
 
+<p align="center">   
+  <img src="./img/4.png" alt="Editor" width="800" /></br>
+  Figure 4: Beam Search in Transformer
+</p>
+
 ##### 3.3.4 Loss Function
 
 With regard to loss function, the total loss is equal to the CrossEntropy between predicted captions and target captions add the attention alpha loss. The alpha loss aims at making decoder-encoder attention cares everywhere of an image and not pay too much attention on the same part of an image. It makes the attention system not miss information from the image and prevent generated captions have many repeated words. 
 
-If the attention method is by channel, for a caption sentence every word in it has a decoder-encoder alpha weight. These weights represent how much attention that every word paid to pixels (196 pixels in total). Then it computes the sum of these words attention weights for every pixel and compare it to 1, and the closer to 1, the smaller loss. Suppose the sum of weights at pixel (x,y) (0≤x,y≤13) is $\alpha_{(x,y)}$, then the alpha loss is $\frac1{14\times 14}\sum_{x,y=0}^{13}(\alpha_{(x,y)}-1)^2$ . This is the alpha loss on one head of multi-attention on one decoder layer. We compute all heads in all decoder layers alpha loss and average them as final alpha loss and add a coefficient before it to control the strength of alpha loss.
-
+If the attention method is by channel, for a caption sentence every word in it has a decoder-encoder alpha weight. These weights represent how much attention that every word paid to pixels (196 pixels in total). Then it computes the sum of these words attention weights for every pixel and compare it to 1, and the closer to 1, the smaller loss. Suppose the sum of weights at pixel (x,y) (0≤x,y≤13) is <img src="https://latex.codecogs.com/svg.latex?%5Csmall%20%5Calpha_%7B%28x%2Cy%29%7D" alt="Editor" />, then the alpha loss is <img src="https://latex.codecogs.com/svg.latex?%5Ctiny%20%5Cfrac1%7B14%5Ctimes%2014%7D%5Csum_%7Bx%2Cy%3D0%7D%5E%7B13%7D%28%5Calpha_%7B%28x%2Cy%29%7D-1%29%5E2" alt="Editor" />. This is the alpha loss on one head of multi-attention on one decoder layer. We compute all heads in all decoder layers alpha loss and average them as final alpha loss and add a coefficient before it to control the strength of alpha loss.
+<p align="center">
+	
 #### 3.4 Beam Search
 
-Figure 4 reflects the process of beam search on our transformer model. In this picture, the beam size is 3.
+Figure 5 reflects the process of beam search on our transformer model. In this picture, the beam size is 3.
 
-<div  align="center">    
-	<img src="./img/4.png" style="zoom:70%" />
-  <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">Figure 4: Beam Search in Transformer</center>
-</div>
+<p align="center">   
+  <img src="./img/8.png" alt="Editor" width="800" /></br>
+  Figure 5: Beam Search in Transformer
+</p>
+
 At the beginning, when we get a picture, we will input `<start>` embedding filled tensor with size (BeamSize=3, max_len=52, EmbeddingSize) to the transformer decoder (here the BatchSize is equal to BeamSize). Then it will give the score for the first word prediction (although it will give predictions for words at all positions, we only care the first position at the start). Then it will choose 3 words ('a', 'an', 'in' in the picture) which have highest 3 scores and put them to the second position in the next word prediction input. For every step, we will input a tensor filled with previous generated words, and we do not need to care about what word we put on input if this word position is bigger than the step iterations because of the sequence mask makes prediction only cares words before them. Then it will give prediction scores for every word in vocabulary for every sequence we put in. Next, it will add these scores and the score of the sequence from which this word generated, and find highest 3 score words. When a sequence is completed (meet `<end>`), we should reduce the input BatchSize. When all the sequences are completed or it has gone to step 52 (sequence max length), it will stop the beam search and output the sentence with highest score.
 
 There is a small defect of our transformer beam search. When we generate the word at position k (1≤k≤52), we still use a tensor with second dimension 52 as input for convenience (the normal way is to input a tensor with second dimension k), it is not a problem, but could make it a little slower when caption. Even so,  comparing to the training time, this is a really negligible defect.
@@ -346,7 +354,7 @@ We choose 3 groups of parameters which have a better performance in pre-experime
 | **T-P2** |         6          |            6            |      8      |     0.1     |          ByPixel           |      1E-4      | 1E-4           | 2.0         |
 | **T-P3** |         2          |            4            |      8      |     0.1     |          ByPixel           |      1E-4      | 1E-4           | 1.0         |
 
-<center>Table 1: Three group of parameters</center>
+<p align="center">Table 1: Three group of parameters</p>
 
 | Decoder  | **BLEU1** | **BLEU2** | **BLEU3** | **BLEU4** | **METEOR** | **ROUGE_L** | **CIDEr** | Human Eval |
 | :------: | :-------: | :-------: | :-------: | :-------: | :--------: | :---------: | :-------: | :--------: |
@@ -355,7 +363,7 @@ We choose 3 groups of parameters which have a better performance in pre-experime
 | **T-P2** |  0.7191   |  0.5143   |  0.3484   |  0.2370   |   0.2747   |   0.5737    |  0.8253   |     4      |
 | **T-P3** |  0.7278   |  0.5248   |  0.3579   |  0.2445   |   0.2773   |   0.5776    |  0.8422   |     4      |
 
-<center>Table 2: Evaluation Result on Val Dataset with Teacher Forcing (10 epochs)</center>
+<p align="center">Table 2: Evaluation Result on Val Dataset with Teacher Forcing (10 epochs)</p>
 
 |            |  LSTM  | Transformer(T-P2) |
 | :--------: | :----: | :---------------: |
@@ -368,7 +376,7 @@ We choose 3 groups of parameters which have a better performance in pre-experime
 |   CIDEr    | 0.9909 |      0.9786       |
 | Human Eval | 4.1/5  |       4.0/5       |
 
-<center>Table 3: Evaluation Result on Test Dataset without Teacher Forcing (Beam Size=3)</center>
+<p align="center">Table 3: Evaluation Result on Test Dataset without Teacher Forcing (Beam Size=3)</p>
 
 #### 4.4 Error Analysis
 
@@ -376,19 +384,22 @@ We choose 3 groups of parameters which have a better performance in pre-experime
 
 During our experiment, we were faced with generating repeated words. We suspect that it is because the attention is paid to the same area multiple times. Trying to tackle this issue, we introduced the second loss---alpha loss to the total loss and increase the coefficient of loss alpha, which helps the attention system pay attention to different parts of the image.
 
-<div  align="center">    
-	<img src="./img/error_repeat.png" style="zoom:60%" />
-  <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">Figure 5: Repeated Words</center> 
-</div>
+<p align="center">   
+  <img src="./img/error_repeat.png" alt="Editor" width="350" /></br>
+  Figure 6: Repeated Words
+</p>
 
 ##### 4.4.2 Attention/Object Recognition
 
 Moreover, it occurs model paid attention to the wrong area and object recognition errors, which are solved by fine-tuning the CNN module. There is an example, where a man was recognized as a woman. After fine-tune, it is recognized correctly as two men, shown in the below figures.
 
-<div  align="center"> 
-  <center class="half">    <img src="./img/5.png"  style="zoom:50%" /><img src="./img/6.png"  style="zoom:50%" /><img src="./img/7.png"  style="zoom:50%" /> </center>
-  <center style="font-size:14px;color:#C0C0C0;text-decoration:underline">Figure 6: Attention/object recognition error</center>
-</div>
+<p align="center">   
+  <img src="./img/5.png" alt="Editor" width="350" />
+  <img src="./img/6.png" alt="Editor" width="350" />
+  <img src="./img/7.png" alt="Editor" width="350" /></br>
+  Figure 7: Attention/object recognition error
+</p>
+
 ##### 4.4.3 GPU/CPU - Float Computational Accuracy
 
 As the experiment going, we found that our transformer model don't have a good performance in `eval` module. However, the caption result seems to be grammatical correctly and expressional accurately in our local PC. After debugging, we found that the same model with the same input would generate different captions if they run on GPU and CPU respectively. The result of CPU is pretty good both on automatic evaluation and human evaluation, but the result of GPU is lack of words, and makes no sense compared with the one generated on CPU. This situation may be caused by the difference between CPU and GPU on `float computational accuracy`. We still have no idea about how to solve it except running our `eval` and `caption` module on CPU. Below table shows the case we met.
@@ -406,6 +417,7 @@ As the experiment going, we found that our transformer model don't have a good p
 >| 0.9999 | 0.8819 | 0.7299 | 0.5774 | 0.2952 | 0.6261  | 1.9781 |
 >
 >* **GPU: Hypotheses:  ['a', 'man', 'riding', 'a', 'a', 'top', 'back']**
+>
 >| Bleu_1 | Bleu_2 | Bleu_3 |  Bleu_4  | METEOR | ROUGE_L | CIDEr  |
 >| :----: | :----: | :----: | :------: | :----: | :-----: | :----: |
 >| 0.6441 | 0.4920 | 0.4175 | 6.08e-05 | 0.2634 | 0.4890  | 1.0489 |
@@ -425,7 +437,7 @@ In this project, we use encoder-decoder framework with Beam Search and different
 
 **Acknowledgements**: Thanks [sgrvinod](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)'s code, which is our baseline for LSTM.
 
-**Team members**: @[Mollylulu](https://github.com/Mollylulu), @[Skye](https://github.com/RoyalSkye), @Zhicheng
+**Team members**: [Mollylulu@NTU](https://github.com/Mollylulu), [Skye@NEU/NTU](https://github.com/RoyalSkye), Zhicheng@PKU/NTU
 
 <h3 align="center">Reference</h3>
 
