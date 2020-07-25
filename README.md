@@ -1,5 +1,14 @@
 ## Image Captioning
 
+**Team members:** [Mollylulu@NTU](https://github.com/Mollylulu), [Skye@NEU/NTU](https://github.com/RoyalSkye), Zhicheng@PKU/NTU
+
+> In this project, we use encoder-decoder framework with Beam Search and different attention methods to solve the image captioning problem, which integrates both computer vision and natural language processing. We compare various results by trying LSTM and Transformer as our decoder and modifying hyperparameters. We also visualize the process of generating captions by attention mechanism. Finally, we evaluate our model by automatic evaluation and human evaluation metrics. Although our model cannot achieve state-of-the-art performance across standard benchmarks on image captioning, it can generate grammatical correctly and expressional accurately captions, and performs well on human evaluation.
+
+**Acknowledgements:** 
+
+* Thanks [sgrvinod](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)'s code, which is our baseline for LSTM.
+* Thank [ziyanyang](https://github.com/ziyanyang) for fixing abnormal results on GPU(Transformer).
+
 ### Section 1: Run
 
 #### 1.1 Dataset
@@ -310,7 +319,7 @@ With regard to loss function, the total loss is equal to the CrossEntropy betwee
 
 If the attention method is by channel, for a caption sentence every word in it has a decoder-encoder alpha weight. These weights represent how much attention that every word paid to pixels (196 pixels in total). Then it computes the sum of these words attention weights for every pixel and compare it to 1, and the closer to 1, the smaller loss. Suppose the sum of weights at pixel (x,y) (0≤x,y≤13) is <img src="https://latex.codecogs.com/svg.latex?%5Csmall%20%5Calpha_%7B%28x%2Cy%29%7D" alt="Editor" />, then the alpha loss is <img src="https://latex.codecogs.com/svg.latex?%5Ctiny%20%5Cfrac1%7B14%5Ctimes%2014%7D%5Csum_%7Bx%2Cy%3D0%7D%5E%7B13%7D%28%5Calpha_%7B%28x%2Cy%29%7D-1%29%5E2" alt="Editor" />. This is the alpha loss on one head of multi-attention on one decoder layer. We compute all heads in all decoder layers alpha loss and average them as final alpha loss and add a coefficient before it to control the strength of alpha loss.
 <p align="center">
-	
+
 #### 3.4 Beam Search
 
 Figure 5 reflects the process of beam search on our transformer model. In this picture, the beam size is 3.
@@ -348,11 +357,11 @@ Although human evaluation is not efficient, it still is regarded as the gold sta
 
 We choose 3 groups of parameters which have a better performance in pre-experiments. Table 2 shows the evaluation result of our model on validation dataset with tearcher forcing. Table 3 compares LSTM with our `current` best model of Transformer. Both of them are trained for 30 epochs. Due to the limited computation resource, we are not allowed to try too many different hyperparameters of Transformer so that it can outperform LSTM in limited training time.
 
-|   Name   | **Encoder Layers** | **Decoder**  **Layers** | **N heads** | **Dropout** | **Attention **  **Method** | **Encoder lr** | **Decoder lr** | **Alpha c** |
-| :------: | :----------------: | :---------------------: | :---------: | :---------: | :------------------------: | :------------: | -------------- | ----------- |
-| **T-P1** |         2          |            2            |      8      |     0.1     |          ByPixel           |      1E-4      | 1E-4           | 1.0         |
-| **T-P2** |         6          |            6            |      8      |     0.1     |          ByPixel           |      1E-4      | 1E-4           | 2.0         |
-| **T-P3** |         2          |            4            |      8      |     0.1     |          ByPixel           |      1E-4      | 1E-4           | 1.0         |
+|   Name   | **Encoder Layers** | **Decoder**  **Layers** | **N heads** | **Dropout** | **Attention   Method** | **Encoder lr** | **Decoder lr** | **Alpha c** |
+| :------: | :----------------: | :---------------------: | :---------: | :---------: | :--------------------: | :------------: | -------------- | ----------- |
+| **T-P1** |         2          |            2            |      8      |     0.1     |        ByPixel         |      1E-4      | 1E-4           | 1.0         |
+| **T-P2** |         6          |            6            |      8      |     0.1     |        ByPixel         |      1E-4      | 1E-4           | 2.0         |
+| **T-P3** |         2          |            4            |      8      |     0.1     |        ByPixel         |      1E-4      | 1E-4           | 1.0         |
 
 <p align="center">Table 1: Three group of parameters</p>
 
@@ -400,7 +409,7 @@ Moreover, it occurs model paid attention to the wrong area and object recognitio
   Figure 7: Attention/object recognition error
 </p>
 
-##### 4.4.3 GPU/CPU - Float Computational Accuracy
+##### ~~4.4.3 GPU/CPU - Float Computational Accuracy~~ (*Solved*)
 
 As the experiment going, we found that our transformer model don't have a good performance in `eval` module. However, the caption result seems to be grammatical correctly and expressional accurately in our local PC. After debugging, we found that the same model with the same input would generate different captions if they run on GPU and CPU respectively. The result of CPU is pretty good both on automatic evaluation and human evaluation, but the result of GPU is lack of words, and makes no sense compared with the one generated on CPU. This situation may be caused by the difference between CPU and GPU on `float computational accuracy`. We still have no idea about how to solve it except running our `eval` and `caption` module on CPU. Below table shows the case we met.
 
@@ -423,21 +432,13 @@ As the experiment going, we found that our transformer model don't have a good p
 >| 0.6441 | 0.4920 | 0.4175 | 6.08e-05 | 0.2634 | 0.4890  | 1.0489 |
 >
 
-### Section 5: Conclusion
-
-In this project, we use encoder-decoder framework with Beam Search and different attention methods to solve the image captioning problem, which integrates both computer vision and natural language processing. We compare various results by trying LSTM and Transformer as our decoder and modifying hyperparameters. We also visualize the process of generating captions by attention mechanism. Finally, we evaluate our model by automatic evaluation and human evaluation metrics. Although our model cannot achieve state-of-the-art performance across standard benchmarks on image captioning, it can generate grammatical correctly and expressional accurately captions, and performs well on human evaluation.
-
-**Recent Research Work and Future:** 
+### Section 5: Recent Research Work and Future
 
 >* Show, Attend and Tell [6]: Bring image captioning problem into the deep learning field
 >* Knowing When to Look [7], SCA-CNN [8], and  Bottom-Up Attention [9]: Various attention methods.
 >* Self-critical Sequence Training [10]: Optimize image captioning systems using reinforcement learning
 >* Neural Baby Talk [11]: Generate a sentence ‘template’ with slot locations explicitly tied to specific image regions.
 >* Auto-Encoding Scene Graphs for Image Captioning [12]: Incorporate the language inductive bias into the encoder-decoder image captioning framework for more human-like captions.
-
-**Acknowledgements**: Thanks [sgrvinod](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)'s code, which is our baseline for LSTM.
-
-**Team members**: [Mollylulu@NTU](https://github.com/Mollylulu), [Skye@NEU/NTU](https://github.com/RoyalSkye), Zhicheng@PKU/NTU
 
 <h3 align="center">Reference</h3>
 

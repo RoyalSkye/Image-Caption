@@ -13,7 +13,7 @@ import argparse
 # from scipy.misc import imread, imresize
 import imageio
 from PIL import Image
-import transformer, models
+# import transformer, models
 
 
 def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
@@ -91,7 +91,7 @@ def caption_image_beam_search(args, encoder, decoder, image_path, word_map):
             h, c = decoder.lstm(torch.cat([embeddings, awe], dim=1), (h, c))  # (s, decoder_dim)
             scores = decoder.fc(h)  # (s, vocab_size)
         elif args.decoder_mode == "transformer":
-            cap_len = torch.LongTensor([52]).repeat(k, 1).to(device)  # [s, 1]
+            cap_len = torch.LongTensor([52]).repeat(k, 1)  # [s, 1]
             scores, _, _, alpha_dict, _ = decoder(encoder_out, k_prev_words, cap_len)
             scores = scores[:, step - 1, :].squeeze(1)  # [s, 1, vocab_size] -> [s, vocab_size]
             # choose the last layer, transformer decoder is comosed of a stack of 6 identical layers.
@@ -215,10 +215,9 @@ if __name__ == '__main__':
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
     args = parser.parse_args()
 
-    # Note: Must use "CPU"
-    device = torch.device("cpu")
-    transformer.device = torch.device("cpu")
-    models.device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # transformer.device = torch.device("cpu")
+    # models.device = torch.device("cpu")
     print(device)
 
     # Load model

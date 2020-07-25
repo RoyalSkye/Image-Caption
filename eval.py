@@ -10,7 +10,7 @@ from nltk.translate.bleu_score import corpus_bleu
 import torch.nn.functional as F
 from tqdm import tqdm
 import argparse
-import transformer, models
+# import transformer, models
 
 
 def evaluate_lstm(args):
@@ -179,7 +179,8 @@ def evaluate_transformer(args):
             # s is a number less than or equal to k, because sequences are removed from this process once they hit <end>
             while True:
                 # print("steps {} k_prev_words: {}".format(step, k_prev_words))
-                cap_len = torch.LongTensor([52]).repeat(k, 1).to(device)  # [s, 1]
+                # cap_len = torch.LongTensor([52]).repeat(k, 1).to(device) may cause different sorted results on GPU/CPU in transformer.py
+                cap_len = torch.LongTensor([52]).repeat(k, 1)  # [s, 1]
                 scores, _, _, _, _ = decoder(encoder_out, k_prev_words, cap_len)
                 scores = scores[:, step-1, :].squeeze(1)  # [s, 1, vocab_size] -> [s, vocab_size]
                 scores = F.log_softmax(scores, dim=1)
@@ -271,10 +272,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     word_map_file = os.path.join(args.data_folder, 'WORDMAP_' + args.data_name + '.json')
-    # Note: Must use "CPU"
-    device = torch.device("cpu")
-    transformer.device = torch.device("cpu")
-    models.device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # transformer.device = torch.device("cpu")
+    # models.device = torch.device("cpu")
     cudnn.benchmark = True  # set to true only if inputs to model are fixed size; otherwise lot of computational overhead
     print(device)
 
