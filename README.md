@@ -167,7 +167,7 @@ $ ./create_input_files.py --karpathy_json_path="./dataset/caption_dataset/datase
 > CNN_LSTM: Train model from scratch without pre-trained Embedding, attention method is `ByPixel`
 >
 > ```shell
-> $ nohup python -u train.py --decoder_mode="lstm" --attention_method="ByPixel" --embed_dim=300 --dropout=0.1 --attention_dim=512 --decoder_dim=512 --alpha_c=1.0 --fine_tune_encoder=False --encoder_lr=0.0001 --decoder_lr=0.0001  2>&1 &
+> $ nohup python -u train.py --decoder_mode="lstm" --attention_method="ByPixel" --emb_dim=300 --dropout=0.1 --attention_dim=512 --decoder_dim=512 --alpha_c=1.0 --fine_tune_encoder=False --encoder_lr=0.0001 --decoder_lr=0.0001  2>&1 &
 > ```
 >
 > CNN_Transformer: Train model from scratch with pre-trained Embedding, attention method is `ByPixel`
