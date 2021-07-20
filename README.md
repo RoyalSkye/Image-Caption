@@ -9,6 +9,15 @@
 * Thanks [sgrvinod](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)'s code, which is our baseline for LSTM.
 * Thank [ziyanyang](https://github.com/ziyanyang) for fixing abnormal results on GPU(Transformer).
 
+**Pre-trained Model:** 
+
+> We train a transformer model for 15 epochs using default setting (e.g.,encoder_layers 2; decoder_layers 6; n_heads 8). Below table shows the evaluation result on test dataset without Teacher Forcing (Beam Size=3). Any other pre-trained model would be welcomed and appreciated.
+>
+
+|                            Model                             | **BLEU1** | **BLEU2** | **BLEU3** | **BLEU4** | **METEOR** | **ROUGE_L** | **CIDEr** |
+| :----------------------------------------------------------: | :-------: | :-------: | :-------: | :-------: | :--------: | :---------: | :-------: |
+| [Default](https://drive.google.com/drive/folders/1GNrptwBlnxAf3HKYdlHLLvszZkdw86Ir?usp=sharing) |  0.7165   |  0.5468   |  0.4119   |  0.3121   |   0.2597   |   0.5302    |  0.9867   |
+
 ### Section 1: Run
 
 #### 1.1 Dataset
@@ -136,7 +145,7 @@ Please make sure you’re in the directory of our project code folder now.</br>A
 $ conda activate nlp 
 $ chmod 755 *.py
 # Default setting: 
-# Note: Please run eval.py and caption.py on CPU! See Also 4.3.3
+# Note: Please run eval.py and caption.py on CPU! See Also 4.4.3
 $ python create_input_files.py
 $ nohup python -u train.py --decoder_mode="lstm" > lstm.out 2>&1 &
 $ nohup python -u eval.py --decoder_mode="lstm" > eval_lstm.out 2>&1 &
@@ -185,7 +194,7 @@ $ ./create_input_files.py --karpathy_json_path="./dataset/caption_dataset/datase
 > Resume training at a checkpoint (**Prerequisite**: You have a checkpoint.)
 >
 > ```shell
-> $ nohup python -u train.py --data_folder="./dataset/generated_data" --checkpoint="./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar" --fine_tune_embedding=True --fine_tune_encoder=True --encoder_lr=0.0001 2>&1 &
+> $ nohup python -u train.py --data_folder="./dataset/generated_data" --checkpoint="./checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar" --fine_tune_embedding=True --fine_tune_encoder=True --encoder_lr=0.0001 2>&1 &
 > ```
 
 **Evaluating:** Evaluating the trained model with `Beam Search` using test dataset. The score of automatic evaluation metrics will be provided.
@@ -430,7 +439,6 @@ As the experiment going, we found that our transformer model don't have a good p
 >| Bleu_1 | Bleu_2 | Bleu_3 |  Bleu_4  | METEOR | ROUGE_L | CIDEr  |
 >| :----: | :----: | :----: | :------: | :----: | :-----: | :----: |
 >| 0.6441 | 0.4920 | 0.4175 | 6.08e-05 | 0.2634 | 0.4890  | 1.0489 |
->
 
 ### Section 5: Recent Research Work and Future
 
